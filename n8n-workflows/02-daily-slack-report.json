@@ -1,0 +1,170 @@
+{
+  "name": "Daily Slack Report - Missed CRM Leads",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "daily-trigger",
+      "name": "Every Workday 9AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "application": "",
+        "table": "",
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "airtable-get-missed",
+      "name": "Airtable - Get Missed Leads",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [250, 0],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "",
+          "name": "Airtable Personal Access Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-records-check",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-has-records",
+      "name": "Has Records?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [500, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nlet messageLines = [];\nmessageLines.push(':rotating_light: *CRM Audit - Missed Leads Report*');\nmessageLines.push(`_Generated: ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}_`);\nmessageLines.push('');\nmessageLines.push(`Total missed leads: *${items.length}*`);\nmessageLines.push('---');\nmessageLines.push('');\n\nfor (let i = 0; i < items.length; i++) {\n  const lead = items[i].json;\n  const name = lead['Lead Name'] || 'N/A';\n  const email = lead['Email'] || 'N/A';\n  const org = lead['Organization'] || 'N/A';\n  const dealValue = lead['Deal Value'] || 'N/A';\n  const closedDate = lead['Closed Won Date'] || 'N/A';\n  const lastChecked = lead['Last Checked'] || 'N/A';\n  \n  messageLines.push(`*${i + 1}. ${name}*`);\n  messageLines.push(`   :email: Email: ${email}`);\n  messageLines.push(`   :office: Organization: ${org}`);\n  messageLines.push(`   :moneybag: Deal Value: ${dealValue}`);\n  messageLines.push(`   :calendar: Closed Won: ${closedDate}`);\n  messageLines.push(`   :clock1: Last Checked: ${lastChecked}`);\n  messageLines.push('');\n}\n\nmessageLines.push('---');\nmessageLines.push('_Please review and add these leads to the Clients table in Airtable._');\n\nreturn [{ json: { slackMessage: messageLines.join('\\n') } }];"
+      },
+      "id": "format-slack-message",
+      "name": "Format Slack Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [750, -100]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "channel": {
+          "__rl": true,
+          "mode": "name",
+          "value": ""
+        },
+        "text": "={{ $json.slackMessage }}",
+        "otherOptions": {}
+      },
+      "id": "slack-send",
+      "name": "Slack - Send Missed Leads Report",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1000, -100],
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "no-records-noop",
+      "name": "No Records - No Action",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [750, 100]
+    }
+  ],
+  "connections": {
+    "Every Workday 9AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "Airtable - Get Missed Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable - Get Missed Leads": {
+      "main": [
+        [
+          {
+            "node": "Has Records?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Records?": {
+      "main": [
+        [
+          {
+            "node": "Format Slack Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Records - No Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Slack Message": {
+      "main": [
+        [
+          {
+            "node": "Slack - Send Missed Leads Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": []
+}

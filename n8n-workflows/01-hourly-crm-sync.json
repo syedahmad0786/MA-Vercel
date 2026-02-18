@@ -1,0 +1,315 @@
+{
+  "name": "Hourly CRM Sync - Close Deals to Airtable Audit",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every Hour Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "resource": "opportunity",
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {
+          "status": "won"
+        }
+      },
+      "id": "close-crm-get-won",
+      "name": "Close CRM - Get Won Deals",
+      "type": "n8n-nodes-base.closeCrm",
+      "typeVersion": 1,
+      "position": [250, 0],
+      "credentials": {
+        "closeCrmApi": {
+          "id": "",
+          "name": "Close CRM API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "application": "",
+        "table": "",
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "airtable-get-clients",
+      "name": "Airtable - Get All Clients",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [250, 250],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "",
+          "name": "Airtable Personal Access Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get Close CRM won deals and Airtable clients\nconst closDeals = $input.all();\nconst airtableClients = $('Airtable - Get All Clients').all();\n\n// Build a Set of Airtable client emails (lowercase for comparison)\nconst airtableEmails = new Set();\nfor (const client of airtableClients) {\n  const email = (client.json.Email || client.json.email || '').toLowerCase().trim();\n  if (email) {\n    airtableEmails.add(email);\n  }\n}\n\n// Also build a Set of Airtable client names for secondary matching\nconst airtableNames = new Set();\nfor (const client of airtableClients) {\n  const name = (client.json.Name || client.json.name || client.json['Contact Name'] || '').toLowerCase().trim();\n  if (name) {\n    airtableNames.add(name);\n  }\n}\n\n// Find deals in Close CRM that are NOT in Airtable\nconst missedLeads = [];\n\nfor (const deal of closDeals) {\n  const d = deal.json;\n  \n  // Extract contact info from the deal\n  const contactName = (d.contact_name || d.lead_name || d.display_name || '').trim();\n  const contactEmail = (d.contact_email || d.lead_email || d.primary_email || '').toLowerCase().trim();\n  const dealValue = d.value || d.annualized_value || d.monthly_value || 0;\n  const dealId = d.id || '';\n  const closedDate = d.date_won || d.date_updated || d.date_created || '';\n  const organizationName = d.organization_name || d.company_name || d.lead_name || '';\n  \n  // Check if this deal's contact exists in Airtable\n  let foundInAirtable = false;\n  \n  if (contactEmail && airtableEmails.has(contactEmail)) {\n    foundInAirtable = true;\n  }\n  \n  if (!foundInAirtable && contactName) {\n    if (airtableNames.has(contactName.toLowerCase())) {\n      foundInAirtable = true;\n    }\n  }\n  \n  if (!foundInAirtable) {\n    missedLeads.push({\n      json: {\n        'Lead Name': contactName,\n        'Email': contactEmail,\n        'Deal Value': dealValue,\n        'Close CRM Deal ID': dealId,\n        'Organization': organizationName,\n        'Closed Won Date': closedDate,\n        'Source': 'Close CRM',\n        'Status': 'Missing from Airtable',\n        'Last Checked': new Date().toISOString()\n      }\n    });\n  }\n}\n\n// If no missed leads, return an empty marker\nif (missedLeads.length === 0) {\n  return [{ json: { _no_missed_leads: true } }];\n}\n\nreturn missedLeads;"
+      },
+      "id": "compare-leads",
+      "name": "Compare - Find Missed Leads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [550, 100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "no-missed-check",
+              "leftValue": "={{ $json._no_missed_leads }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEqual"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-missed-leads",
+      "name": "Has Missed Leads?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [800, 100]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "application": "",
+        "table": "",
+        "filterByFormula": "=({Email} = '{{ $json.Email }}')",
+        "options": {}
+      },
+      "id": "airtable-search-audit",
+      "name": "Airtable - Search Audit Table",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [1050, 0],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "",
+          "name": "Airtable Personal Access Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "record-exists-check",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-record-exists",
+      "name": "Record Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1300, 0]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "application": "",
+        "table": "",
+        "id": "={{ $('Airtable - Search Audit Table').item.json.id }}",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Last Checked": "={{ $('Compare - Find Missed Leads').item.json['Last Checked'] }}",
+            "Deal Value": "={{ $('Compare - Find Missed Leads').item.json['Deal Value'] }}",
+            "Status": "={{ $('Compare - Find Missed Leads').item.json['Status'] }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "airtable-update-existing",
+      "name": "Airtable - Update Existing Record",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [1550, -100],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "",
+          "name": "Airtable Personal Access Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "application": "",
+        "table": "",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead Name": "={{ $('Compare - Find Missed Leads').item.json['Lead Name'] }}",
+            "Email": "={{ $('Compare - Find Missed Leads').item.json['Email'] }}",
+            "Deal Value": "={{ $('Compare - Find Missed Leads').item.json['Deal Value'] }}",
+            "Close CRM Deal ID": "={{ $('Compare - Find Missed Leads').item.json['Close CRM Deal ID'] }}",
+            "Organization": "={{ $('Compare - Find Missed Leads').item.json['Organization'] }}",
+            "Closed Won Date": "={{ $('Compare - Find Missed Leads').item.json['Closed Won Date'] }}",
+            "Source": "={{ $('Compare - Find Missed Leads').item.json['Source'] }}",
+            "Status": "={{ $('Compare - Find Missed Leads').item.json['Status'] }}",
+            "Last Checked": "={{ $('Compare - Find Missed Leads').item.json['Last Checked'] }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "airtable-create-new",
+      "name": "Airtable - Create New Audit Record",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [1550, 100],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "",
+          "name": "Airtable Personal Access Token"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "no-action",
+      "name": "No Missed Leads - No Action",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1050, 250]
+    }
+  ],
+  "connections": {
+    "Every Hour Trigger": {
+      "main": [
+        [
+          {
+            "node": "Close CRM - Get Won Deals",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Airtable - Get All Clients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Close CRM - Get Won Deals": {
+      "main": [
+        [
+          {
+            "node": "Compare - Find Missed Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable - Get All Clients": {
+      "main": [
+        []
+      ]
+    },
+    "Compare - Find Missed Leads": {
+      "main": [
+        [
+          {
+            "node": "Has Missed Leads?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Missed Leads?": {
+      "main": [
+        [
+          {
+            "node": "Airtable - Search Audit Table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Missed Leads - No Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable - Search Audit Table": {
+      "main": [
+        [
+          {
+            "node": "Record Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Exists?": {
+      "main": [
+        [
+          {
+            "node": "Airtable - Update Existing Record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Airtable - Create New Audit Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": []
+}

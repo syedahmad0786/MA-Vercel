@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-26T22:00:53.555Z",
+  "updatedAt": "2026-02-26T22:47:54.152Z",
   "createdAt": "2026-02-26T13:07:12.522Z",
   "id": "c3YJOMgusFdagAdU",
   "name": "\ud83d\udd0d Complete SEO Audit System v4.0 (Google Sheet Input)",
@@ -612,19 +612,31 @@
     {
       "id": "d00d8c2e-1afa-490a-bd4b-a58c4859d5bb",
       "name": "Full Site Crawl (Apify)",
-      "type": "@apify/n8n-nodes-apify.apify",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [
         -1600,
         1700
       ],
       "parameters": {
-        "actorId": {
-          "__rl": true,
-          "value": "aYG0l9s7dbB7j3gbS",
-          "mode": "list",
-          "cachedResultName": "Website Content Crawler (apify/website-content-crawler)"
+        "url": "https://api.apify.com/v2/acts/aYG0l9s7dbB7j3gbS/runs?waitForFinish=120",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ startUrls: [{ url: $('Set Client Variables').first().json.websiteUrl }], maxCrawlPages: 100, maxCrawlDepth: 3, crawlerType: 'cheerio', saveHtml: true, saveMarkdown: true }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
         },
-        "input": "={\n  \"startUrls\": [{ \"url\": \"{{ $(\"Set Client Variables\").first().json.websiteUrl }}\" }],\n  \"maxCrawlPages\": 100,\n  \"maxCrawlDepth\": 3,\n  \"crawlerType\": \"cheerio\",\n  \"saveHtml\": true,\n  \"saveMarkdown\": true\n}"
+        "options": {
+          "timeout": 120000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "apifyApi"
       },
       "credentials": {
         "apifyApi": {
@@ -632,7 +644,7 @@
           "name": "Apify account"
         }
       },
-      "typeVersion": 1,
+      "typeVersion": 4.2,
       "onError": "continueRegularOutput"
     },
     {
@@ -652,19 +664,31 @@
     {
       "id": "9c85b888-3577-4650-89c9-283da5219e61",
       "name": "Apify SEO Audit",
-      "type": "@apify/n8n-nodes-apify.apify",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [
         -1600,
         1900
       ],
       "parameters": {
-        "actorId": {
-          "__rl": true,
-          "value": "UFSUQD7pWNwN3jExC",
-          "mode": "list",
-          "cachedResultName": "Complete SEO Audit Tool - Comprehensive Website SEO Analysis (smart-digital/complete-seo-audit-tool)"
+        "url": "https://api.apify.com/v2/acts/UFSUQD7pWNwN3jExC/runs?waitForFinish=120",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ startUrls: [{ url: $('Set Client Variables').first().json.websiteUrl }], maxPages: 50 }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
         },
-        "input": "={\n  \"url\": \"{{ $(\"Set Client Variables\").first().json.websiteUrl }}\",\n  \"maxPages\": 50\n}"
+        "options": {
+          "timeout": 120000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "apifyApi"
       },
       "credentials": {
         "apifyApi": {
@@ -672,7 +696,7 @@
           "name": "Apify account"
         }
       },
-      "typeVersion": 1,
+      "typeVersion": 4.2,
       "onError": "continueRegularOutput"
     },
     {
@@ -1511,20 +1535,15 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
+            "Client Name": "={{ $('Set Client Variables').first().json.clientName }}",
             "Status": "Complete",
             "CompletedDate": "={{ new Date().toISOString().split('T')[0] }}"
-          }
-        },
-        "options": {},
-        "dataMode": "autoMapInputData",
-        "filtersUI": {
-          "values": [
-            {
-              "lookupColumn": "Client Name",
-              "lookupValue": "={{ $('Set Client Variables').first().json.clientName }}"
-            }
+          },
+          "matchingColumns": [
+            "Client Name"
           ]
-        }
+        },
+        "options": {}
       },
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -1532,7 +1551,8 @@
           "name": "Google Sheets - SEO Audit"
         }
       },
-      "typeVersion": 4.5
+      "typeVersion": 4.5,
+      "onError": "continueRegularOutput"
     },
     {
       "id": "15eeab34-2a1c-4379-85e1-28173edb61f0",
@@ -1554,11 +1574,12 @@
           "name": "Gmail - SEO Audit"
         }
       },
-      "typeVersion": 2.1
+      "typeVersion": 2.1,
+      "onError": "continueRegularOutput"
     },
     {
-      "id": "33361cd6-5fb0-429b-93c3-614aa6c777a7",
-      "name": "Audit Trigger Webhook",
+      "id": "9ece55b7-4e82-4284-9548-7af13bad8df9",
+      "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -1566,13 +1587,13 @@
         100
       ],
       "parameters": {
-        "path": "run-audit-1139d598",
+        "path": "audit-3d390c22",
         "httpMethod": "GET",
         "responseMode": "onReceived",
         "responseData": "allEntries",
         "options": {}
       },
-      "webhookId": "0f4d3fe6-db8e-4d90-9ae5-b34ac88ce7b8"
+      "webhookId": "94ec33f3-d742-4ae0-8969-3d2e5453ecd3"
     }
   ],
   "connections": {
@@ -2258,7 +2279,7 @@
         []
       ]
     },
-    "Audit Trigger Webhook": {
+    "Webhook Trigger": {
       "main": [
         [
           {
@@ -2287,9 +2308,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "01e1e663-ccbc-46b8-8e4e-a9510854d1c3",
-  "activeVersionId": "01e1e663-ccbc-46b8-8e4e-a9510854d1c3",
-  "versionCounter": 37,
+  "versionId": "e4ffa914-8efe-4780-a5f1-1cde31ef6d2f",
+  "activeVersionId": "e4ffa914-8efe-4780-a5f1-1cde31ef6d2f",
+  "versionCounter": 57,
   "triggerCount": 2,
   "shared": [
     {
@@ -2350,9 +2371,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-02-26T22:00:53.563Z",
-    "createdAt": "2026-02-26T22:00:53.563Z",
-    "versionId": "01e1e663-ccbc-46b8-8e4e-a9510854d1c3",
+    "updatedAt": "2026-02-26T22:47:54.155Z",
+    "createdAt": "2026-02-26T22:47:54.155Z",
+    "versionId": "e4ffa914-8efe-4780-a5f1-1cde31ef6d2f",
     "workflowId": "c3YJOMgusFdagAdU",
     "nodes": [
       {
@@ -2960,19 +2981,31 @@
       {
         "id": "d00d8c2e-1afa-490a-bd4b-a58c4859d5bb",
         "name": "Full Site Crawl (Apify)",
-        "type": "@apify/n8n-nodes-apify.apify",
+        "type": "n8n-nodes-base.httpRequest",
         "position": [
           -1600,
           1700
         ],
         "parameters": {
-          "actorId": {
-            "__rl": true,
-            "value": "aYG0l9s7dbB7j3gbS",
-            "mode": "list",
-            "cachedResultName": "Website Content Crawler (apify/website-content-crawler)"
+          "url": "https://api.apify.com/v2/acts/aYG0l9s7dbB7j3gbS/runs?waitForFinish=120",
+          "method": "POST",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ startUrls: [{ url: $('Set Client Variables').first().json.websiteUrl }], maxCrawlPages: 100, maxCrawlDepth: 3, crawlerType: 'cheerio', saveHtml: true, saveMarkdown: true }) }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
           },
-          "input": "={\n  \"startUrls\": [{ \"url\": \"{{ $(\"Set Client Variables\").first().json.websiteUrl }}\" }],\n  \"maxCrawlPages\": 100,\n  \"maxCrawlDepth\": 3,\n  \"crawlerType\": \"cheerio\",\n  \"saveHtml\": true,\n  \"saveMarkdown\": true\n}"
+          "options": {
+            "timeout": 120000
+          },
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "apifyApi"
         },
         "credentials": {
           "apifyApi": {
@@ -2980,7 +3013,7 @@
             "name": "Apify account"
           }
         },
-        "typeVersion": 1,
+        "typeVersion": 4.2,
         "onError": "continueRegularOutput"
       },
       {
@@ -3000,19 +3033,31 @@
       {
         "id": "9c85b888-3577-4650-89c9-283da5219e61",
         "name": "Apify SEO Audit",
-        "type": "@apify/n8n-nodes-apify.apify",
+        "type": "n8n-nodes-base.httpRequest",
         "position": [
           -1600,
           1900
         ],
         "parameters": {
-          "actorId": {
-            "__rl": true,
-            "value": "UFSUQD7pWNwN3jExC",
-            "mode": "list",
-            "cachedResultName": "Complete SEO Audit Tool - Comprehensive Website SEO Analysis (smart-digital/complete-seo-audit-tool)"
+          "url": "https://api.apify.com/v2/acts/UFSUQD7pWNwN3jExC/runs?waitForFinish=120",
+          "method": "POST",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ startUrls: [{ url: $('Set Client Variables').first().json.websiteUrl }], maxPages: 50 }) }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
           },
-          "input": "={\n  \"url\": \"{{ $(\"Set Client Variables\").first().json.websiteUrl }}\",\n  \"maxPages\": 50\n}"
+          "options": {
+            "timeout": 120000
+          },
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "apifyApi"
         },
         "credentials": {
           "apifyApi": {
@@ -3020,7 +3065,7 @@
             "name": "Apify account"
           }
         },
-        "typeVersion": 1,
+        "typeVersion": 4.2,
         "onError": "continueRegularOutput"
       },
       {
@@ -3859,20 +3904,15 @@
           "columns": {
             "mappingMode": "defineBelow",
             "value": {
+              "Client Name": "={{ $('Set Client Variables').first().json.clientName }}",
               "Status": "Complete",
               "CompletedDate": "={{ new Date().toISOString().split('T')[0] }}"
-            }
-          },
-          "options": {},
-          "dataMode": "autoMapInputData",
-          "filtersUI": {
-            "values": [
-              {
-                "lookupColumn": "Client Name",
-                "lookupValue": "={{ $('Set Client Variables').first().json.clientName }}"
-              }
+            },
+            "matchingColumns": [
+              "Client Name"
             ]
-          }
+          },
+          "options": {}
         },
         "credentials": {
           "googleSheetsOAuth2Api": {
@@ -3880,7 +3920,8 @@
             "name": "Google Sheets - SEO Audit"
           }
         },
-        "typeVersion": 4.5
+        "typeVersion": 4.5,
+        "onError": "continueRegularOutput"
       },
       {
         "id": "15eeab34-2a1c-4379-85e1-28173edb61f0",
@@ -3902,11 +3943,12 @@
             "name": "Gmail - SEO Audit"
           }
         },
-        "typeVersion": 2.1
+        "typeVersion": 2.1,
+        "onError": "continueRegularOutput"
       },
       {
-        "id": "33361cd6-5fb0-429b-93c3-614aa6c777a7",
-        "name": "Audit Trigger Webhook",
+        "id": "9ece55b7-4e82-4284-9548-7af13bad8df9",
+        "name": "Webhook Trigger",
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
         "position": [
@@ -3914,13 +3956,13 @@
           100
         ],
         "parameters": {
-          "path": "run-audit-1139d598",
+          "path": "audit-3d390c22",
           "httpMethod": "GET",
           "responseMode": "onReceived",
           "responseData": "allEntries",
           "options": {}
         },
-        "webhookId": "0f4d3fe6-db8e-4d90-9ae5-b34ac88ce7b8"
+        "webhookId": "94ec33f3-d742-4ae0-8969-3d2e5453ecd3"
       }
     ],
     "connections": {
@@ -4606,7 +4648,7 @@
           []
         ]
       },
-      "Audit Trigger Webhook": {
+      "Webhook Trigger": {
         "main": [
           [
             {

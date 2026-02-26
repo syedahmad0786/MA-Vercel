@@ -1,0 +1,2164 @@
+{
+  "name": "\ud83d\udd0d Complete SEO Audit System v4.0 (Google Sheet Input)",
+  "nodes": [
+    {
+      "id": "f3f94b70-b392-4af2-98fb-91a412b068c7",
+      "name": "\ud83d\udccb PHASE 1: CLIENT INPUT",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3400,
+        -200
+      ],
+      "parameters": {
+        "content": "## PHASE 1: CLIENT INPUT\n\nReads client data from Google Sheet 'SEO Audit Queue'.\n\n**Sheet Columns:**\n- Client Name\n- Website URL\n- Competitor 1, 2, 3\n- GA4 Property ID\n- GSC Property URL\n- Target Location\n- Goals\n- Email\n- Status (Pending/In Progress/Complete)\n\nSet status to **Pending** to trigger audit.",
+        "width": 400,
+        "height": 350,
+        "color": 1
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "051cc662-e5dc-4634-b0c7-12730783c06f",
+      "name": "\ud83d\udd27 PHASE 2: TECHNICAL AUDIT",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1800,
+        -200
+      ],
+      "parameters": {
+        "content": "## PHASE 2: TECHNICAL AUDIT\n\n- Full site crawl (500 URLs via Apify)\n- PageSpeed Insights (Mobile + Desktop)\n- Google Search Console data\n- robots.txt analysis\n- HTTPS check\n- Sitemap validation\n- Core Web Vitals",
+        "width": 350,
+        "height": 280,
+        "color": 2
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "8cb3d525-a586-4132-88ae-ff46d7b9295d",
+      "name": "\ud83d\udd11 PHASE 3: KEYWORD RESEARCH",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -400,
+        -200
+      ],
+      "parameters": {
+        "content": "## PHASE 3: KEYWORD RESEARCH\n\n- GSC keyword extraction\n- Competitor keyword scraping\n- Keyword clustering via AI\n- Intent classification\n- AEO opportunity identification",
+        "width": 350,
+        "height": 250,
+        "color": 3
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "ccc5013a-6666-4deb-8836-d021dc23798c",
+      "name": "\ud83d\udcdd PHASE 4: ON-PAGE AUDIT",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        700,
+        -200
+      ],
+      "parameters": {
+        "content": "## PHASE 4: ON-PAGE AUDIT\n\n- Metadata audit (titles, descriptions site-wide)\n- Content quality analysis\n- Schema/structured data validation\n- H-tag structure\n- Thin content detection",
+        "width": 350,
+        "height": 250,
+        "color": 4
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "17a6f940-e29a-41d4-a805-405868cbe109",
+      "name": "\ud83d\udd17 PHASE 5: OFF-PAGE AUDIT",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1600,
+        -200
+      ],
+      "parameters": {
+        "content": "## PHASE 5: OFF-PAGE AUDIT\n\n- Backlink profile analysis\n- Toxic backlink scoring\n- Anchor text profiling\n- Referring domain analysis\n- Competitor backlink gap",
+        "width": 350,
+        "height": 250,
+        "color": 5
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "58a1f685-5341-4794-ae47-c2be3430ffb6",
+      "name": "\ud83c\udfc6 PHASE 6: COMPETITOR ANALYSIS",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2500,
+        -200
+      ],
+      "parameters": {
+        "content": "## PHASE 6: COMPETITOR ANALYSIS\n\n- Competitor CWV comparison\n- Competitor keyword gap\n- Competitor backlink comparison\n- Technical stack comparison",
+        "width": 350,
+        "height": 250,
+        "color": 6
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "b09683da-e935-4cb6-9e5a-5feca05f7076",
+      "name": "\ud83d\udcca PHASE 8: FINAL REPORT",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3400,
+        -200
+      ],
+      "parameters": {
+        "content": "## PHASE 8: FINAL DELIVERABLES\n\n- Master report compilation\n- Priority action list\n- Save to Google Sheets (multi-tab)\n- Email delivery\n- Status update",
+        "width": 350,
+        "height": 250,
+        "color": 7
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "f6f58ac3-a158-4aaf-8cac-f6f20d69a1e5",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -3200,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "id": "84737512-cefb-4f10-bab4-37c2af670c65",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -3200,
+        500
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "typeVersion": 1.2
+    },
+    {
+      "id": "3bd37628-47f0-4a73-9061-fa482393ca7b",
+      "name": "Read Audit Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -2900,
+        400
+      ],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Audit Queue"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "BqCsF5fexBb586JV",
+          "name": "Google Sheets account"
+        }
+      },
+      "typeVersion": 4.5
+    },
+    {
+      "id": "2eabbbe8-8287-4267-a746-bbcbba75ae5b",
+      "name": "Filter Pending",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        -2650,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 1,
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "status-check",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Pending"
+            }
+          ]
+        }
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "cfe62d0f-6ea1-483f-a4d1-7917fb3a3ddf",
+      "name": "Set Client Variables",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -2400,
+        400
+      ],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b2b7cd47-5c01-4555-83a9-5ccf61f83735",
+              "name": "clientName",
+              "type": "string",
+              "value": "={{ $json['Client Name'] }}"
+            },
+            {
+              "id": "25af68ab-62a3-4980-81a7-ab356da79a57",
+              "name": "websiteUrl",
+              "type": "string",
+              "value": "={{ $json['Website URL'] }}"
+            },
+            {
+              "id": "7d22f31c-399a-4c79-8a30-d4ed06b7db82",
+              "name": "competitor1",
+              "type": "string",
+              "value": "={{ $json['Competitor 1'] || '' }}"
+            },
+            {
+              "id": "ddfef56f-bf9b-4a36-b2d6-1b69ae61a0b9",
+              "name": "competitor2",
+              "type": "string",
+              "value": "={{ $json['Competitor 2'] || '' }}"
+            },
+            {
+              "id": "8bf79b3d-4c79-4844-a716-1ba5d27b289d",
+              "name": "competitor3",
+              "type": "string",
+              "value": "={{ $json['Competitor 3'] || '' }}"
+            },
+            {
+              "id": "a4304b2a-72f3-4105-88ba-45276a9ab7f6",
+              "name": "ga4PropertyId",
+              "type": "string",
+              "value": "={{ $json['GA4 Property ID'] || '' }}"
+            },
+            {
+              "id": "413f93df-8cdd-40ae-b687-4ccfb25eb886",
+              "name": "gscProperty",
+              "type": "string",
+              "value": "={{ $json['GSC Property'] || $json['Website URL'] }}"
+            },
+            {
+              "id": "9fa70906-9439-447f-9850-89bb0f9b350f",
+              "name": "targetLocation",
+              "type": "string",
+              "value": "={{ $json['Target Location'] || '' }}"
+            },
+            {
+              "id": "fa504adb-3f8b-41f9-93be-ab5c60ced9fe",
+              "name": "goals",
+              "type": "string",
+              "value": "={{ $json['Goals'] || '' }}"
+            },
+            {
+              "id": "692183c7-ddbb-4293-8c4e-29288c31d5db",
+              "name": "clientEmail",
+              "type": "string",
+              "value": "={{ $json['Email'] || '' }}"
+            },
+            {
+              "id": "933c95a4-b839-4213-b612-dddb366119f2",
+              "name": "rowNumber",
+              "type": "number",
+              "value": "={{ $json.row_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "747de9f2-5df4-43ca-b354-05436b5b8a1d",
+      "name": "Update Status: In Progress",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -2100,
+        600
+      ],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Audit Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "In Progress"
+          }
+        },
+        "options": {},
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "row_number",
+              "lookupValue": "={{ $json.rowNumber }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "BqCsF5fexBb586JV",
+          "name": "Google Sheets account"
+        }
+      },
+      "typeVersion": 4.5
+    },
+    {
+      "id": "ac252de6-f98a-4672-8593-12438a95e152",
+      "name": "PageSpeed Mobile",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        100
+      ],
+      "parameters": {
+        "url": "=https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={{ encodeURIComponent($json.websiteUrl) }}&category=performance&category=accessibility&category=best-practices&category=seo&strategy=mobile",
+        "method": "GET",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "4a51a80f-804f-49db-8e38-1bada0fde8c1",
+      "name": "PageSpeed Desktop",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        300
+      ],
+      "parameters": {
+        "url": "=https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={{ encodeURIComponent($json.websiteUrl) }}&category=performance&category=accessibility&category=best-practices&category=seo&strategy=desktop",
+        "method": "GET",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "7748787e-6116-4267-a7fd-50888ce3cb14",
+      "name": "Format PageSpeed Results",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -1300,
+        200
+      ],
+      "parameters": {
+        "jsCode": "// Format PageSpeed data from both Mobile and Desktop\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const json = item.json;\n  const lighthouse = json.lighthouseResult || {};\n  const categories = lighthouse.categories || {};\n  const audits = lighthouse.audits || {};\n  const strategy = json.lighthouseResult?.configSettings?.formFactor || 'unknown';\n\n  const cwv = {\n    strategy: strategy,\n    performanceScore: Math.round((categories.performance?.score || 0) * 100),\n    accessibilityScore: Math.round((categories.accessibility?.score || 0) * 100),\n    bestPracticesScore: Math.round((categories['best-practices']?.score || 0) * 100),\n    seoScore: Math.round((categories.seo?.score || 0) * 100),\n    LCP: audits['largest-contentful-paint']?.displayValue || 'N/A',\n    LCP_score: audits['largest-contentful-paint']?.score || 0,\n    CLS: audits['cumulative-layout-shift']?.displayValue || 'N/A',\n    CLS_score: audits['cumulative-layout-shift']?.score || 0,\n    INP: audits['interaction-to-next-paint']?.displayValue || audits['max-potential-fid']?.displayValue || 'N/A',\n    FCP: audits['first-contentful-paint']?.displayValue || 'N/A',\n    TBT: audits['total-blocking-time']?.displayValue || 'N/A',\n    speedIndex: audits['speed-index']?.displayValue || 'N/A',\n    TTFB: audits['server-response-time']?.displayValue || 'N/A',\n    renderBlockingResources: audits['render-blocking-resources']?.details?.items?.length || 0,\n    unusedCSS: audits['unused-css-rules']?.details?.items?.length || 0,\n    unusedJS: audits['unused-javascript']?.details?.items?.length || 0,\n    largeImages: (audits['uses-optimized-images']?.details?.items?.length || 0) +\n                 (audits['uses-responsive-images']?.details?.items?.length || 0),\n    opportunities: Object.values(audits)\n      .filter(a => a.details?.type === 'opportunity' && a.score !== null && a.score < 0.9)\n      .map(a => ({ title: a.title, savings: a.displayValue, score: a.score }))\n      .slice(0, 10)\n  };\n  results.push({ json: cwv });\n}\n\nreturn results;"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "20e407f3-c796-4314-8b81-9146fd60696f",
+      "name": "GSC: Query Performance",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        500
+      ],
+      "parameters": {
+        "url": "=https://www.googleapis.com/webmasters/v3/sites/{{ encodeURIComponent($json.gscProperty) }}/searchAnalytics/query",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"startDate\": \"{{ new Date(Date.now() - 90*24*60*60*1000).toISOString().split(\"T\")[0] }}\",\n  \"endDate\": \"{{ new Date(Date.now() - 2*24*60*60*1000).toISOString().split(\"T\")[0] }}\",\n  \"dimensions\": [\"query\"],\n  \"rowLimit\": 500,\n  \"dimensionFilterGroups\": []\n}",
+        "options": {
+          "timeout": 60000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api"
+      },
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "03TmsNrvmztxYMfp",
+          "name": "Google account"
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "6a54eac1-26f7-48af-acee-b45a69a75588",
+      "name": "GSC: Page Performance",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        700
+      ],
+      "parameters": {
+        "url": "=https://www.googleapis.com/webmasters/v3/sites/{{ encodeURIComponent($json.gscProperty) }}/searchAnalytics/query",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"startDate\": \"{{ new Date(Date.now() - 90*24*60*60*1000).toISOString().split(\"T\")[0] }}\",\n  \"endDate\": \"{{ new Date(Date.now() - 2*24*60*60*1000).toISOString().split(\"T\")[0] }}\",\n  \"dimensions\": [\"page\"],\n  \"rowLimit\": 500\n}",
+        "options": {
+          "timeout": 60000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api"
+      },
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "03TmsNrvmztxYMfp",
+          "name": "Google account"
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "5ee7a72a-b7b5-4e25-a442-79aeaa797e09",
+      "name": "GSC: Sitemaps",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        900
+      ],
+      "parameters": {
+        "url": "=https://www.googleapis.com/webmasters/v3/sites/{{ encodeURIComponent($json.gscProperty) }}/sitemaps",
+        "method": "GET",
+        "options": {
+          "timeout": 30000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api"
+      },
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "03TmsNrvmztxYMfp",
+          "name": "Google account"
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f3df45c0-4b62-4b66-b6d8-08e08e0992a5",
+      "name": "GSC: Country Performance",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        1100
+      ],
+      "parameters": {
+        "url": "=https://www.googleapis.com/webmasters/v3/sites/{{ encodeURIComponent($json.gscProperty) }}/searchAnalytics/query",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"startDate\": \"{{ new Date(Date.now() - 90*24*60*60*1000).toISOString().split(\"T\")[0] }}\",\n  \"endDate\": \"{{ new Date(Date.now() - 2*24*60*60*1000).toISOString().split(\"T\")[0] }}\",\n  \"dimensions\": [\"country\"],\n  \"rowLimit\": 50\n}",
+        "options": {
+          "timeout": 60000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api"
+      },
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "03TmsNrvmztxYMfp",
+          "name": "Google account"
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "87599da4-6a3e-496d-b723-806391af9793",
+      "name": "Fetch robots.txt",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        1300
+      ],
+      "parameters": {
+        "url": "={{ $json.websiteUrl.replace(/\\/$/, '') + '/robots.txt' }}",
+        "method": "GET",
+        "options": {
+          "timeout": 15000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": true
+            }
+          }
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "7236574c-45ef-4c40-b45e-2792a9989413",
+      "name": "Parse robots.txt",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -1300,
+        1300
+      ],
+      "parameters": {
+        "jsCode": "// Parse robots.txt content\nconst body = $input.first().json.data || $input.first().json.body || '';\nconst lines = body.split('\\n');\nconst rules = { userAgents: [], disallowed: [], allowed: [], sitemaps: [], issues: [] };\nlet currentUA = '';\n\nfor (const line of lines) {\n  const trimmed = line.trim();\n  if (!trimmed || trimmed.startsWith('#')) continue;\n\n  const [directive, ...valueParts] = trimmed.split(':');\n  const value = valueParts.join(':').trim();\n  const dir = directive.toLowerCase().trim();\n\n  if (dir === 'user-agent') { currentUA = value; rules.userAgents.push(value); }\n  else if (dir === 'disallow') { rules.disallowed.push({ ua: currentUA, path: value }); }\n  else if (dir === 'allow') { rules.allowed.push({ ua: currentUA, path: value }); }\n  else if (dir === 'sitemap') { rules.sitemaps.push(value); }\n}\n\n// Check for issues\nif (!rules.userAgents.includes('*')) rules.issues.push('No wildcard user-agent rule');\nif (rules.disallowed.some(r => r.path === '/')) rules.issues.push('WARNING: Entire site disallowed for some user-agent');\nif (rules.sitemaps.length === 0) rules.issues.push('No sitemap declared in robots.txt');\nconst blockingImportant = rules.disallowed.filter(r =>\n  r.path.includes('/wp-content/') || r.path.includes('/assets/') || r.path.includes('.css') || r.path.includes('.js')\n);\nif (blockingImportant.length > 0) rules.issues.push('Blocking potentially important resources: ' + blockingImportant.map(r=>r.path).join(', '));\n\nreturn [{ json: {\n  robotsTxt: body.substring(0, 2000),\n  totalDisallowRules: rules.disallowed.length,\n  totalAllowRules: rules.allowed.length,\n  sitemapsInRobots: rules.sitemaps,\n  issues: rules.issues,\n  hasWildcardUA: rules.userAgents.includes('*'),\n  disallowedPaths: rules.disallowed.slice(0, 50)\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "a136446d-b395-46b1-9d88-2315110075ff",
+      "name": "HTTPS Redirect Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        1500
+      ],
+      "parameters": {
+        "url": "={{ $json.websiteUrl.replace('https://', 'http://') }}",
+        "method": "GET",
+        "options": {
+          "timeout": 15000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "b0e52493-38ea-41da-b821-c8c367759ff5",
+      "name": "Analyze HTTPS",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -1300,
+        1500
+      ],
+      "parameters": {
+        "jsCode": "// Check HTTPS implementation\nconst response = $input.first().json;\nconst statusCode = response.statusCode || response.headers?.status || 0;\nconst location = response.headers?.location || '';\nconst hasHttpsRedirect = statusCode >= 300 && statusCode < 400 && location.startsWith('https://');\nconst isAlreadyHttps = $('Set Client Variables').first().json.websiteUrl.startsWith('https://');\n\nreturn [{ json: {\n  httpsEnabled: isAlreadyHttps,\n  httpRedirectsToHttps: hasHttpsRedirect,\n  redirectStatusCode: statusCode,\n  redirectLocation: location,\n  issues: !isAlreadyHttps && !hasHttpsRedirect ? ['Site does not redirect HTTP to HTTPS'] :\n          statusCode === 302 ? ['Using 302 temporary redirect instead of 301 permanent'] : []\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "d00d8c2e-1afa-490a-bd4b-a58c4859d5bb",
+      "name": "Full Site Crawl (Apify)",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "position": [
+        -1600,
+        1700
+      ],
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "aYG0l9s7dbB7j3gbS",
+          "mode": "list",
+          "cachedResultName": "Website Content Crawler (apify/website-content-crawler)"
+        },
+        "input": "={\n  \"startUrls\": [{ \"url\": \"{{ $json.websiteUrl }}\" }],\n  \"maxCrawlPages\": 500,\n  \"maxCrawlDepth\": 5,\n  \"crawlerType\": \"cheerio\",\n  \"includeUrlGlobs\": [],\n  \"excludeUrlGlobs\": [\"**/wp-admin/**\", \"**/feed/**\", \"**/xmlrpc**\"],\n  \"saveHtml\": true,\n  \"saveMarkdown\": true,\n  \"proxyConfiguration\": { \"useApifyProxy\": true }\n}"
+      },
+      "credentials": {
+        "apifyApi": {
+          "id": "J4e9uHqO0Vhcu00D",
+          "name": "Apify account"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "a2f5e2b1-4ae9-48dd-b7ff-a100a77c529f",
+      "name": "Process Crawl Data",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -1300,
+        1700
+      ],
+      "parameters": {
+        "jsCode": "// Process full site crawl data - extract SEO elements from all pages\nconst pages = $input.all();\nconst results = {\n  totalPages: pages.length,\n  pages: [],\n  siteWideIssues: { missingTitles: 0, duplicateTitles: [], missingMetas: 0, duplicateMetas: [],\n    missingH1: 0, multipleH1: 0, thinContent: 0, missingSchema: 0, brokenInternalLinks: 0 },\n  titles: {}, metas: {}\n};\n\nfor (const page of pages) {\n  const p = page.json;\n  const url = p.url || '';\n  const html = p.html || p.text || '';\n  const title = (html.match(/<title[^>]*>([^<]*)<\\/title>/i) || [])[1] || '';\n  const metaDesc = (html.match(/<meta\\s+name=[\"']description[\"']\\s+content=[\"']([^\"']*)[\"']/i) || [])[1] || '';\n  const h1s = (html.match(/<h1[^>]*>[^<]*<\\/h1>/gi) || []);\n  const h2s = (html.match(/<h2[^>]*>[^<]*<\\/h2>/gi) || []);\n  const wordCount = (p.text || html.replace(/<[^>]*>/g, '')).split(/\\s+/).filter(w => w.length > 0).length;\n  const hasSchema = html.includes('application/ld+json') || html.includes('itemscope');\n  const canonical = (html.match(/<link\\s+rel=[\"']canonical[\"']\\s+href=[\"']([^\"']*)[\"']/i) || [])[1] || '';\n  const internalLinks = (html.match(/href=[\"'][^\"']*[\"']/gi) || []).length;\n  const images = (html.match(/<img[^>]*>/gi) || []);\n  const imagesWithoutAlt = images.filter(img => !img.includes('alt=')).length;\n\n  // Track duplicates\n  if (!title) results.siteWideIssues.missingTitles++;\n  else { results.titles[title] = (results.titles[title] || []); results.titles[title].push(url); }\n  if (!metaDesc) results.siteWideIssues.missingMetas++;\n  else { results.metas[metaDesc] = (results.metas[metaDesc] || []); results.metas[metaDesc].push(url); }\n  if (h1s.length === 0) results.siteWideIssues.missingH1++;\n  if (h1s.length > 1) results.siteWideIssues.multipleH1++;\n  if (wordCount < 300) results.siteWideIssues.thinContent++;\n  if (!hasSchema) results.siteWideIssues.missingSchema++;\n\n  results.pages.push({\n    url, title: title.substring(0, 100),\n    titleLength: title.length,\n    metaDescription: metaDesc.substring(0, 200),\n    metaDescLength: metaDesc.length,\n    h1Count: h1s.length, h2Count: h2s.length, wordCount,\n    hasSchema, canonical, internalLinkCount: internalLinks,\n    imageCount: images.length, imagesWithoutAlt,\n    isThinContent: wordCount < 300,\n    titleIssue: !title ? 'MISSING' : title.length > 60 ? 'TOO_LONG' : title.length < 30 ? 'TOO_SHORT' : 'OK',\n    metaIssue: !metaDesc ? 'MISSING' : metaDesc.length > 160 ? 'TOO_LONG' : metaDesc.length < 70 ? 'TOO_SHORT' : 'OK'\n  });\n}\n\n// Find duplicates\nresults.siteWideIssues.duplicateTitles = Object.entries(results.titles)\n  .filter(([t, urls]) => urls.length > 1).map(([t, urls]) => ({ title: t, count: urls.length, urls }));\nresults.siteWideIssues.duplicateMetas = Object.entries(results.metas)\n  .filter(([m, urls]) => urls.length > 1).map(([m, urls]) => ({ meta: m, count: urls.length, urls }));\n\ndelete results.titles;\ndelete results.metas;\n\nreturn [{ json: results }];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "9c85b888-3577-4650-89c9-283da5219e61",
+      "name": "Apify SEO Audit",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "position": [
+        -1600,
+        1900
+      ],
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "UFSUQD7pWNwN3jExC",
+          "mode": "list",
+          "cachedResultName": "Complete SEO Audit Tool - Comprehensive Website SEO Analysis (smart-digital/complete-seo-audit-tool)"
+        },
+        "input": "={\n  \"url\": \"{{ $json.websiteUrl }}\",\n  \"maxPages\": 200\n}"
+      },
+      "credentials": {
+        "apifyApi": {
+          "id": "J4e9uHqO0Vhcu00D",
+          "name": "Apify account"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "8e0b9f8d-9bdd-49c0-abe7-e5054449ebd8",
+      "name": "Merge Technical Data",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        -900,
+        900
+      ],
+      "parameters": {
+        "mode": "append"
+      },
+      "typeVersion": 3
+    },
+    {
+      "id": "b5c337c4-fb9c-4aa4-8683-057796bf6af4",
+      "name": "Process Technical Merge",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -650,
+        900
+      ],
+      "parameters": {
+        "jsCode": "// Combine all technical audit data into a single structured object\nconst items = $input.all().map(i => i.json);\nconst clientVars = $('Set Client Variables').first().json;\nconst today = new Date().toISOString().split('T')[0];\n\nreturn [{ json: {\n  auditId: 'TECH_AUDIT_' + today,\n  clientName: clientVars.clientName,\n  websiteUrl: clientVars.websiteUrl,\n  auditDate: today,\n  technicalData: items,\n  dataSourceCount: items.length\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "45f32894-ded5-4db7-9019-4e2259b04c77",
+      "name": "OpenAI: Technical Audit",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        -450,
+        600
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-nano",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {
+          "temperature": 0.3,
+          "timeout": 300000
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "yqwDvtDBsNVSeylm",
+          "name": "OpenAi account"
+        }
+      },
+      "typeVersion": 1.2
+    },
+    {
+      "id": "0740ca96-f980-4435-9ff5-0ff0bb6fe786",
+      "name": "Technical Audit Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -400,
+        400
+      ],
+      "parameters": {
+        "text": "=You are a Senior Technical SEO Auditor. Analyze the following technical audit data and produce a structured report.\n\nCLIENT: {{ $json.clientName }}\nWEBSITE: {{ $json.websiteUrl }}\nAUDIT DATE: {{ $json.auditDate }}\n\nTECHNICAL DATA:\n{{ JSON.stringify($json.technicalData, null, 2) }}\n\n## YOUR REPORT MUST INCLUDE:\n\n### 1. SITE HEALTH SCORE (0-100)\nCalculate based on: crawlability, HTTPS, Core Web Vitals, robots.txt, sitemap, internal linking, duplicate content, schema\n\n### 2. CORE WEB VITALS SUMMARY\n- LCP, CLS, INP scores for mobile and desktop\n- Performance, Accessibility, Best Practices, SEO scores\n- Key render-blocking resources and optimization opportunities\n\n### 3. CRAWLABILITY & INDEXING\n- Total pages found vs indexed\n- robots.txt issues\n- Sitemap status\n- Orphan pages\n\n### 4. TECHNICAL ISSUES (grouped by severity)\n**Critical**: Issues that block indexing or severely hurt rankings\n**High**: Issues with significant SEO impact\n**Medium**: Issues with moderate impact\n**Low**: Minor improvements\n\n### 5. PRIORITY ACTION ITEMS\nNumbered list of fixes ordered by impact, with estimated effort (Quick Fix / Medium / Complex)\n\nKeep analysis factual. Cite specific URLs, metrics, and data points. Do not speculate.",
+        "options": {
+          "systemMessage": "You are a technical SEO specialist. Output structured, data-driven analysis only. Never invent data."
+        }
+      },
+      "typeVersion": 1.7
+    },
+    {
+      "id": "6f2a71b5-c12f-49b6-a702-0f313e923463",
+      "name": "Extract GSC Keywords",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -200,
+        500
+      ],
+      "parameters": {
+        "jsCode": "// Extract and categorize keywords from GSC query data\nconst techData = $('Process Technical Merge').first().json.technicalData || [];\nconst clientVars = $('Set Client Variables').first().json;\n\n// Find the GSC query data (it's one of the merged items)\nlet queryRows = [];\nfor (const d of techData) {\n  if (d.rows && d.rows[0] && d.rows[0].keys) {\n    // Check if this is query-dimension data (single key per row that looks like a search query)\n    const firstKey = d.rows[0].keys[0] || '';\n    if (!firstKey.startsWith('http') && !firstKey.match(/^[a-z]{2,3}$/)) {\n      queryRows = d.rows;\n      break;\n    }\n  }\n}\n\n// Categorize keywords\nconst keywords = queryRows.map(row => {\n  const query = row.keys[0];\n  const clicks = row.clicks || 0;\n  const impressions = row.impressions || 0;\n  const ctr = row.ctr || 0;\n  const position = row.position || 0;\n\n  // Intent classification\n  let intent = 'informational';\n  if (query.match(/buy|price|cost|cheap|best|review|compare|deal|discount|coupon|shop|order/i)) intent = 'commercial';\n  else if (query.match(/how|what|why|when|where|who|guide|tutorial|tips|learn/i)) intent = 'informational';\n  else if (query.match(/login|sign in|account|contact|support|phone|address/i)) intent = 'navigational';\n  else if (query.match(/near me|in \\w+|local|delivery|service area/i)) intent = 'local';\n\n  // Opportunity classification\n  let opportunity = 'maintain';\n  if (position <= 3 && ctr < 0.05) opportunity = 'ctr_optimization';\n  else if (position > 3 && position <= 10) opportunity = 'push_to_top3';\n  else if (position > 10 && position <= 20) opportunity = 'quick_win';\n  else if (position > 20 && impressions > 100) opportunity = 'content_needed';\n\n  // AEO flag (question queries)\n  const isAEO = /^(how|what|why|when|where|who|can|does|is|are|will|should)\\b/i.test(query);\n\n  return { query, clicks, impressions, ctr: Math.round(ctr * 10000) / 100,\n    position: Math.round(position * 10) / 10, intent, opportunity, isAEO };\n});\n\n// Sort by impressions\nkeywords.sort((a, b) => b.impressions - a.impressions);\n\n// Summary stats\nconst summary = {\n  totalKeywords: keywords.length,\n  byIntent: { informational: 0, commercial: 0, navigational: 0, local: 0 },\n  byOpportunity: { ctr_optimization: 0, push_to_top3: 0, quick_win: 0, content_needed: 0, maintain: 0 },\n  aeoKeywords: keywords.filter(k => k.isAEO).length,\n  top10Keywords: keywords.filter(k => k.position <= 10).length,\n  top3Keywords: keywords.filter(k => k.position <= 3).length,\n};\nkeywords.forEach(k => {\n  summary.byIntent[k.intent] = (summary.byIntent[k.intent] || 0) + 1;\n  summary.byOpportunity[k.opportunity] = (summary.byOpportunity[k.opportunity] || 0) + 1;\n});\n\nreturn [{ json: {\n  summary,\n  keywords: keywords.slice(0, 200),\n  aeoKeywords: keywords.filter(k => k.isAEO).slice(0, 50),\n  quickWins: keywords.filter(k => k.opportunity === 'quick_win').slice(0, 30),\n  ctrOpportunities: keywords.filter(k => k.opportunity === 'ctr_optimization').slice(0, 30),\n  competitors: [clientVars.competitor1, clientVars.competitor2, clientVars.competitor3].filter(Boolean)\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "8b544829-5bb4-4ea2-b7fb-178e15b2785f",
+      "name": "Scrape Competitor Keywords",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "position": [
+        -200,
+        700
+      ],
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "TMVSmdgr57tzAHwYv",
+          "mode": "list",
+          "cachedResultName": "Ahrefs Scraper (radeance/ahrefs-scraper)"
+        },
+        "input": "={{ JSON.stringify({ urls: [$json.competitor1 ? \"https://ahrefs.com/organic-keywords/\" + $json.competitor1.replace(\"https://\",\"\").replace(\"http://\",\"\").split(\"/\")[0] : \"\"], maxPages: 3 }) }}"
+      },
+      "credentials": {
+        "apifyApi": {
+          "id": "J4e9uHqO0Vhcu00D",
+          "name": "Apify account"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "75cc3c7f-dbf8-46f1-8454-5caf86ef8fc2",
+      "name": "OpenAI: Keyword Research",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        100,
+        800
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-nano",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {
+          "temperature": 0.4,
+          "timeout": 300000
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "yqwDvtDBsNVSeylm",
+          "name": "OpenAi account"
+        }
+      },
+      "typeVersion": 1.2
+    },
+    {
+      "id": "aa22d5b1-5c54-4137-ab85-5bbfa5bc29b1",
+      "name": "Keyword Research Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        150,
+        500
+      ],
+      "parameters": {
+        "text": "=You are an expert SEO keyword strategist. Analyze the following keyword data and produce a comprehensive keyword research report.\n\nWEBSITE: {{ $('Set Client Variables').first().json.websiteUrl }}\nTARGET LOCATION: {{ $('Set Client Variables').first().json.targetLocation }}\nGOALS: {{ $('Set Client Variables').first().json.goals }}\nCOMPETITORS: {{ $('Set Client Variables').first().json.competitor1 }}, {{ $('Set Client Variables').first().json.competitor2 }}, {{ $('Set Client Variables').first().json.competitor3 }}\n\nGSC KEYWORD DATA:\n{{ JSON.stringify($json, null, 2) }}\n\n## YOUR REPORT MUST INCLUDE:\n\n### 1. KEYWORD UNIVERSE SUMMARY\n- Total keywords tracked, by intent category, top performers\n\n### 2. KEYWORD CLUSTERS (group by topic)\nGroup all keywords into 10-20 thematic clusters. For each cluster:\n- Cluster name\n- Primary keyword + search intent\n- Supporting keywords\n- Current average position\n- Content recommendation (new page, optimize existing, blog post)\n\n### 3. AEO OPPORTUNITIES (Answer Engine Optimization)\n- Question-based keywords suitable for featured snippets/AI answers\n- Recommended answer format (paragraph, list, table)\n- PAA (People Also Ask) opportunities\n\n### 4. QUICK WINS (Position 11-20 keywords with high impressions)\nPrioritized list of keywords that need small pushes to reach page 1\n\n### 5. CTR OPTIMIZATION (Top 3 but low CTR)\nKeywords ranking well but underperforming on clicks - title/description improvements needed\n\n### 6. CONTENT GAP ANALYSIS\n- Missing topic areas based on competitor comparison\n- New content recommendations with target keywords\n\n### 7. LOCAL/GEO OPPORTUNITIES\nLocation-based keyword opportunities if applicable\n\nOutput as structured analysis with specific, actionable recommendations.",
+        "options": {
+          "systemMessage": "You are a keyword research specialist. Base all analysis on the provided data. Clearly separate data-driven insights from recommendations."
+        }
+      },
+      "typeVersion": 1.7
+    },
+    {
+      "id": "6d7c96c3-cf41-4786-8eac-574275f5d367",
+      "name": "Prepare On-Page Data",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        700,
+        400
+      ],
+      "parameters": {
+        "jsCode": "// Prepare crawl data for on-page analysis\nconst techData = $('Process Technical Merge').first().json.technicalData || [];\n\n// Find crawl results\nlet crawlData = null;\nfor (const d of techData) {\n  if (d.totalPages || d.pages) { crawlData = d; break; }\n}\n\nif (!crawlData) {\n  return [{ json: { error: 'No crawl data available', pages: [], siteWideIssues: {} } }];\n}\n\n// Extract schema data from pages\nconst schemaAudit = {\n  pagesWithSchema: 0,\n  pagesWithoutSchema: 0,\n  schemaTypes: {},\n  missingSchemaUrls: []\n};\n\n(crawlData.pages || []).forEach(page => {\n  if (page.hasSchema) {\n    schemaAudit.pagesWithSchema++;\n  } else {\n    schemaAudit.pagesWithoutSchema++;\n    schemaAudit.missingSchemaUrls.push(page.url);\n  }\n});\n\nreturn [{ json: {\n  totalPages: crawlData.totalPages || 0,\n  siteWideIssues: crawlData.siteWideIssues || {},\n  schemaAudit,\n  metadataIssues: {\n    missingTitles: (crawlData.pages || []).filter(p => p.titleIssue === 'MISSING'),\n    longTitles: (crawlData.pages || []).filter(p => p.titleIssue === 'TOO_LONG'),\n    shortTitles: (crawlData.pages || []).filter(p => p.titleIssue === 'TOO_SHORT'),\n    missingMetas: (crawlData.pages || []).filter(p => p.metaIssue === 'MISSING'),\n    longMetas: (crawlData.pages || []).filter(p => p.metaIssue === 'TOO_LONG'),\n    shortMetas: (crawlData.pages || []).filter(p => p.metaIssue === 'TOO_SHORT'),\n    duplicateTitles: crawlData.siteWideIssues?.duplicateTitles || [],\n    duplicateMetas: crawlData.siteWideIssues?.duplicateMetas || []\n  },\n  contentIssues: {\n    thinPages: (crawlData.pages || []).filter(p => p.isThinContent),\n    missingH1: (crawlData.pages || []).filter(p => p.h1Count === 0),\n    multipleH1: (crawlData.pages || []).filter(p => p.h1Count > 1),\n    imagesWithoutAlt: (crawlData.pages || []).filter(p => p.imagesWithoutAlt > 0)\n  },\n  allPages: (crawlData.pages || []).slice(0, 100)\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "1e93ac9f-78fb-4f94-aacd-31d45a05664d",
+      "name": "OpenAI: On-Page Audit",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        950,
+        700
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-nano",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {
+          "temperature": 0.3,
+          "timeout": 300000
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "yqwDvtDBsNVSeylm",
+          "name": "OpenAi account"
+        }
+      },
+      "typeVersion": 1.2
+    },
+    {
+      "id": "e4bc3e86-b91b-442f-af0f-9780eb5c77e1",
+      "name": "On-Page Audit Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1000,
+        400
+      ],
+      "parameters": {
+        "text": "=You are an On-Page SEO Specialist. Analyze the following site-wide on-page data and produce a detailed audit report.\n\nWEBSITE: {{ $('Set Client Variables').first().json.websiteUrl }}\n\nON-PAGE DATA:\n{{ JSON.stringify($json, null, 2) }}\n\n## YOUR REPORT MUST INCLUDE:\n\n### 1. METADATA AUDIT\n- Missing titles count + URLs\n- Duplicate titles (exact matches across pages)\n- Too long/short titles\n- Missing meta descriptions + URLs\n- Duplicate meta descriptions\n- Low CTR title recommendations\n\n### 2. CONTENT AUDIT\n- Thin content pages (< 300 words) with URLs\n- Missing H1 tags\n- Multiple H1 tags\n- H2/H3 structure issues\n- Images without alt text\n\n### 3. SCHEMA/STRUCTURED DATA AUDIT\n- Pages WITH schema vs WITHOUT\n- Recommended schema types per page type (homepage\u2192Organization, blog\u2192Article, product\u2192Product, etc.)\n- Missing schema opportunities\n\n### 4. E-E-A-T ASSESSMENT\n- Author information presence\n- About page quality\n- Trust signals (testimonials, certifications, etc.)\n\n### 5. PRIORITY FIXES (ordered by impact)\nFor each fix: URL, Issue, Recommended Fix, Priority (Critical/High/Medium/Low)\n\nBase all analysis on provided data. Be specific with URLs and metrics.",
+        "options": {
+          "systemMessage": "You are an on-page SEO specialist. Analyze data thoroughly. Always reference specific URLs and counts."
+        }
+      },
+      "typeVersion": 1.7
+    },
+    {
+      "id": "05dccf2e-7e3e-4a8c-b0e2-283efb36b6c1",
+      "name": "Ahrefs Backlink Scrape",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "position": [
+        1600,
+        400
+      ],
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "TMVSmdgr57tzAHwYv",
+          "mode": "list",
+          "cachedResultName": "Ahrefs Scraper (radeance/ahrefs-scraper)"
+        },
+        "input": "={{ JSON.stringify({ urls: [\"https://ahrefs.com/backlink-checker/\" + $json.websiteUrl.replace(\"https://\",\"\").replace(\"http://\",\"\").split(\"/\")[0]], maxPages: 5 }) }}"
+      },
+      "credentials": {
+        "apifyApi": {
+          "id": "J4e9uHqO0Vhcu00D",
+          "name": "Apify account"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "50d99776-8086-47ee-a34c-6b1646d9e3d6",
+      "name": "Process Backlink Data",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1900,
+        400
+      ],
+      "parameters": {
+        "jsCode": "// Process Ahrefs backlink data\nconst items = $input.all();\nconst clientVars = $('Set Client Variables').first().json;\nconst backlinks = [];\nlet totalBacklinks = 0;\nlet referringDomains = 0;\nlet domainRating = 'N/A';\nconst anchorTexts = {};\nconst referringDomainsList = {};\nlet toxicIndicators = 0;\n\nfor (const item of items) {\n  const d = item.json;\n\n  // Try to extract summary stats\n  if (d.domainRating) domainRating = d.domainRating;\n  if (d.backlinks) totalBacklinks = d.backlinks;\n  if (d.referringDomains) referringDomains = d.referringDomains;\n\n  // Process individual backlinks if available\n  if (d.results || d.items) {\n    const links = d.results || d.items || [];\n    for (const link of links) {\n      const anchor = link.anchor || link.anchorText || '';\n      const source = link.sourceUrl || link.refpage || '';\n      const domain = link.sourceDomain || link.refdomain || '';\n      const dofollow = link.dofollow !== false;\n      const dr = link.domainRating || link.dr || 0;\n\n      // Anchor text profiling\n      const anchorType = !anchor || anchor.length < 2 ? 'naked/empty' :\n        anchor.toLowerCase().includes(clientVars.websiteUrl.replace(/https?:\\/\\//, '').replace(/\\//g, '')) ? 'branded' :\n        anchor.match(/click here|read more|visit|here|this/i) ? 'generic' : 'keyword-rich';\n      anchorTexts[anchorType] = (anchorTexts[anchorType] || 0) + 1;\n\n      // Referring domains\n      if (domain) referringDomainsList[domain] = (referringDomainsList[domain] || 0) + 1;\n\n      // Toxic indicators (very basic heuristic)\n      if (dr < 10 || domain.match(/spam|link|seo|directory|free/i)) toxicIndicators++;\n\n      backlinks.push({ source: source.substring(0, 200), domain, anchor: anchor.substring(0, 100), anchorType, dofollow, dr });\n    }\n  }\n}\n\nconst uniqueDomains = Object.keys(referringDomainsList).length;\n\nreturn [{ json: {\n  summary: {\n    totalBacklinks: totalBacklinks || backlinks.length,\n    referringDomains: referringDomains || uniqueDomains,\n    domainRating,\n    dofollowRatio: backlinks.filter(b => b.dofollow).length / Math.max(backlinks.length, 1),\n    toxicIndicators,\n    estimatedToxicPercent: Math.round((toxicIndicators / Math.max(backlinks.length, 1)) * 100)\n  },\n  anchorTextProfile: anchorTexts,\n  topReferringDomains: Object.entries(referringDomainsList)\n    .sort((a, b) => b[1] - a[1]).slice(0, 30)\n    .map(([domain, count]) => ({ domain, backlinks: count })),\n  backlinks: backlinks.slice(0, 100),\n  competitors: [clientVars.competitor1, clientVars.competitor2, clientVars.competitor3].filter(Boolean)\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "3bd89b6c-5702-4fd8-94fc-01d2ab03c1a0",
+      "name": "OpenAI: Backlink Audit",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        2200,
+        700
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-nano",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {
+          "temperature": 0.3,
+          "timeout": 300000
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "yqwDvtDBsNVSeylm",
+          "name": "OpenAi account"
+        }
+      },
+      "typeVersion": 1.2
+    },
+    {
+      "id": "ad3052d3-68ef-4cfa-a159-f20c445c9302",
+      "name": "Backlink Audit Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2250,
+        400
+      ],
+      "parameters": {
+        "text": "=You are a Link Building & Off-Page SEO Specialist. Analyze the backlink profile data and produce a comprehensive off-page audit.\n\nWEBSITE: {{ $('Set Client Variables').first().json.websiteUrl }}\n\nBACKLINK DATA:\n{{ JSON.stringify($json, null, 2) }}\n\n## YOUR REPORT MUST INCLUDE:\n\n### 1. BACKLINK PROFILE SUMMARY\n- Total backlinks, referring domains, domain rating\n- Dofollow vs nofollow ratio\n- Growth trend assessment\n\n### 2. ANCHOR TEXT ANALYSIS\n- Distribution: branded vs keyword-rich vs generic vs naked URLs\n- Over-optimization risk assessment\n- Recommended anchor text ratio\n\n### 3. TOXIC BACKLINK ASSESSMENT\n- Estimated toxic percentage\n- Suspicious patterns (spam domains, low DR, irrelevant niches)\n- Disavow recommendations\n\n### 4. REFERRING DOMAIN QUALITY\n- Top referring domains by authority\n- Domain diversity score\n- Industry relevance\n\n### 5. COMPETITOR BACKLINK GAP\nBased on available competitor data:\n- Link building opportunities from competitor backlinks\n- Common referring domains\n- Unique competitor advantages\n\n### 6. LINK BUILDING RECOMMENDATIONS\n- Priority link building targets\n- Recommended outreach strategies\n- Estimated effort and timeline\n\nBe specific with domain names and metrics. Flag genuine risks.",
+        "options": {
+          "systemMessage": "You are a backlink analysis specialist. Base analysis on provided data only. Be conservative with toxic assessments."
+        }
+      },
+      "typeVersion": 1.7
+    },
+    {
+      "id": "5e57c78f-20bf-4a6a-bb26-fb1ae274692a",
+      "name": "Prepare Competitor URLs",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2500,
+        400
+      ],
+      "parameters": {
+        "jsCode": "// Prepare competitor URLs for parallel analysis\nconst vars = $('Set Client Variables').first().json;\nconst competitors = [vars.competitor1, vars.competitor2, vars.competitor3].filter(Boolean);\n\nif (competitors.length === 0) {\n  return [{ json: { noCompetitors: true, message: 'No competitors provided - skipping competitor analysis' } }];\n}\n\nreturn competitors.map(url => ({\n  json: {\n    competitorUrl: url,\n    competitorDomain: url.replace(/https?:\\/\\//, '').replace(/\\/.*/, ''),\n    clientUrl: vars.websiteUrl,\n    clientName: vars.clientName\n  }\n}));"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "7a6b4dc6-233e-438f-9542-3291c3594a33",
+      "name": "Competitor PageSpeed",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        300
+      ],
+      "parameters": {
+        "url": "=https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={{ encodeURIComponent($json.competitorUrl) }}&category=performance&category=seo&strategy=mobile",
+        "method": "GET",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "8074c593-d833-4917-978b-dc7301499486",
+      "name": "Format Competitor PageSpeed",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        3050,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Format competitor PageSpeed results\nconst json = $input.first().json;\nconst lighthouse = json.lighthouseResult || {};\nconst categories = lighthouse.categories || {};\nconst audits = lighthouse.audits || {};\nconst competitorInfo = $('Prepare Competitor URLs').first().json;\n\nreturn [{ json: {\n  competitor: competitorInfo.competitorUrl,\n  performanceScore: Math.round((categories.performance?.score || 0) * 100),\n  seoScore: Math.round((categories.seo?.score || 0) * 100),\n  LCP: audits['largest-contentful-paint']?.displayValue || 'N/A',\n  CLS: audits['cumulative-layout-shift']?.displayValue || 'N/A',\n  FCP: audits['first-contentful-paint']?.displayValue || 'N/A',\n  TBT: audits['total-blocking-time']?.displayValue || 'N/A',\n  TTFB: audits['server-response-time']?.displayValue || 'N/A'\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "79c7884a-a38b-4ac4-a110-228204bb565b",
+      "name": "Competitor Backlinks Scrape",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "position": [
+        2800,
+        500
+      ],
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "TMVSmdgr57tzAHwYv",
+          "mode": "list",
+          "cachedResultName": "Ahrefs Scraper (radeance/ahrefs-scraper)"
+        },
+        "input": "={\n  \"urls\": [\"https://ahrefs.com/backlink-checker/{{ $json.competitorDomain }}\"],\n  \"maxPages\": 3\n}"
+      },
+      "credentials": {
+        "apifyApi": {
+          "id": "J4e9uHqO0Vhcu00D",
+          "name": "Apify account"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "33ec50be-1f2c-4893-aec1-35ca806cc341",
+      "name": "Merge Competitor Data",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        3300,
+        400
+      ],
+      "parameters": {
+        "mode": "append"
+      },
+      "typeVersion": 3
+    },
+    {
+      "id": "2d58e80e-e1e8-4f2c-9143-508a23d5a965",
+      "name": "OpenAI: Competitor Analysis",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        3500,
+        700
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-nano",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {
+          "temperature": 0.3,
+          "timeout": 300000
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "yqwDvtDBsNVSeylm",
+          "name": "OpenAi account"
+        }
+      },
+      "typeVersion": 1.2
+    },
+    {
+      "id": "247a2ad8-cc44-4134-98de-db6ea0baf9db",
+      "name": "Competitor Analysis Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3550,
+        400
+      ],
+      "parameters": {
+        "text": "=You are a Competitive Intelligence SEO Analyst. Compare the client's website against competitors.\n\nCLIENT: {{ $('Set Client Variables').first().json.clientName }}\nCLIENT WEBSITE: {{ $('Set Client Variables').first().json.websiteUrl }}\nCOMPETITORS: {{ $('Set Client Variables').first().json.competitor1 }}, {{ $('Set Client Variables').first().json.competitor2 }}, {{ $('Set Client Variables').first().json.competitor3 }}\n\nCOMPETITOR DATA:\n{{ JSON.stringify($input.all().map(i => i.json), null, 2) }}\n\nCLIENT TECHNICAL DATA (from earlier audit):\nPageSpeed & CWV data available from the technical audit phase.\n\n## YOUR REPORT MUST INCLUDE:\n\n### 1. COMPETITIVE OVERVIEW TABLE\n| Metric | Client | Competitor 1 | Competitor 2 | Competitor 3 |\nCompare: Performance Score, SEO Score, LCP, CLS, Domain Rating, Backlinks, Referring Domains\n\n### 2. COMPETITOR TECHNICAL COMPARISON\n- Site speed comparison\n- Core Web Vitals comparison\n- Who has the technical advantage and why\n\n### 3. KEYWORD GAP ANALYSIS\nBased on available data:\n- Keywords competitors rank for that client doesn't\n- Overlapping keywords where client is behind\n- Unique client advantages\n\n### 4. BACKLINK GAP\n- Competitor backlink sources client is missing\n- Link velocity comparison\n- Anchor strategy comparison\n\n### 5. STRATEGIC RECOMMENDATIONS\n- Quick wins to close competitive gaps\n- Long-term strategies to surpass competitors\n- Priority actions ranked by impact\n\nBe factual. Use actual numbers. Clearly state when data is limited.",
+        "options": {
+          "systemMessage": "You are a competitive SEO analyst. Compare objectively using available data. Acknowledge data limitations."
+        }
+      },
+      "typeVersion": 1.7
+    },
+    {
+      "id": "61a93605-0cd8-4633-8f50-31c1872d1111",
+      "name": "Check GA4 Available",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -200,
+        1000
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ga4-check",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              },
+              "leftValue": "={{ $('Set Client Variables').first().json.ga4PropertyId }}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "059d998f-80f9-42f1-bcc3-0508a48ab25a",
+      "name": "Fetch GA4: Traffic Overview",
+      "type": "n8n-nodes-base.googleAnalytics",
+      "position": [
+        -50,
+        950
+      ],
+      "parameters": {
+        "propertyId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Set Client Variables').first().json.ga4PropertyId }}"
+        },
+        "metricsGA4": {
+          "metricValues": [
+            {
+              "listName": "totalUsers"
+            },
+            {
+              "listName": "sessions"
+            },
+            {
+              "listName": "screenPageViews"
+            },
+            {
+              "listName": "averageSessionDuration"
+            },
+            {
+              "listName": "bounceRate"
+            }
+          ]
+        },
+        "dimensionsGA4": {
+          "dimensionValues": [
+            {
+              "listName": "date"
+            }
+          ]
+        },
+        "dateRange": "last90Days",
+        "options": {}
+      },
+      "credentials": {
+        "googleAnalyticsOAuth2": {
+          "id": "5QwNdmVAHZVRe1S2",
+          "name": "Google Analytics account"
+        }
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "b7b1838e-3ff3-4402-9a02-b64aad1b4e74",
+      "name": "Fetch GA4: Top Pages",
+      "type": "n8n-nodes-base.googleAnalytics",
+      "position": [
+        -50,
+        1150
+      ],
+      "parameters": {
+        "propertyId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Set Client Variables').first().json.ga4PropertyId }}"
+        },
+        "metricsGA4": {
+          "metricValues": [
+            {
+              "listName": "screenPageViews"
+            },
+            {
+              "listName": "totalUsers"
+            },
+            {
+              "listName": "averageSessionDuration"
+            },
+            {
+              "listName": "bounceRate"
+            }
+          ]
+        },
+        "dimensionsGA4": {
+          "dimensionValues": [
+            {
+              "listName": "pagePath"
+            }
+          ]
+        },
+        "dateRange": "last90Days",
+        "options": {
+          "limit": 50
+        }
+      },
+      "credentials": {
+        "googleAnalyticsOAuth2": {
+          "id": "5QwNdmVAHZVRe1S2",
+          "name": "Google Analytics account"
+        }
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "1039a45e-70f2-49c1-adbc-c17f082e0d49",
+      "name": "Fetch GA4: Traffic Sources",
+      "type": "n8n-nodes-base.googleAnalytics",
+      "position": [
+        -50,
+        1350
+      ],
+      "parameters": {
+        "propertyId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Set Client Variables').first().json.ga4PropertyId }}"
+        },
+        "metricsGA4": {
+          "metricValues": [
+            {
+              "listName": "sessions"
+            },
+            {
+              "listName": "totalUsers"
+            },
+            {
+              "listName": "screenPageViews"
+            }
+          ]
+        },
+        "dimensionsGA4": {
+          "dimensionValues": [
+            {
+              "listName": "sessionSource"
+            },
+            {
+              "listName": "sessionMedium"
+            }
+          ]
+        },
+        "dateRange": "last90Days",
+        "options": {
+          "limit": 30
+        }
+      },
+      "credentials": {
+        "googleAnalyticsOAuth2": {
+          "id": "5QwNdmVAHZVRe1S2",
+          "name": "Google Analytics account"
+        }
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "6d4c44f1-99f3-4974-bc39-8ab987ab9446",
+      "name": "Merge GA4 Data",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        250,
+        1150
+      ],
+      "parameters": {
+        "mode": "append"
+      },
+      "typeVersion": 3
+    },
+    {
+      "id": "a41b93b7-7851-4ede-baff-ee3f8aa97d9a",
+      "name": "Process GA4 Data",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        500,
+        1150
+      ],
+      "parameters": {
+        "jsCode": "// Process GA4 data for analysis\nconst items = $input.all().map(i => i.json);\nreturn [{ json: { ga4Data: items, hasGA4: true } }];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "16e9763b-e3b9-4514-ace1-52e4a07c70b5",
+      "name": "Merge All Reports",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        3800,
+        600
+      ],
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "typeVersion": 3
+    },
+    {
+      "id": "d2bd4452-e04f-4ef5-b3c2-a13e9eb75761",
+      "name": "Compile Final Data",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        4050,
+        600
+      ],
+      "parameters": {
+        "jsCode": "// Compile all reports into final structured output\nconst allData = $input.all().map(i => i.json);\nconst clientVars = $('Set Client Variables').first().json;\nconst today = new Date().toISOString().split('T')[0];\n\nreturn [{ json: {\n  auditId: 'SEO_AUDIT_' + today + '_' + clientVars.clientName.replace(/\\s+/g, '_'),\n  clientName: clientVars.clientName,\n  websiteUrl: clientVars.websiteUrl,\n  auditDate: today,\n  competitors: [clientVars.competitor1, clientVars.competitor2, clientVars.competitor3].filter(Boolean),\n  targetLocation: clientVars.targetLocation,\n  goals: clientVars.goals,\n  reports: allData,\n  reportCount: allData.length\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "5bd255af-ea06-4127-98e5-580b77a1621e",
+      "name": "OpenAI: Master Report",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        4300,
+        900
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-nano",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {
+          "temperature": 0.3,
+          "timeout": 600000
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "yqwDvtDBsNVSeylm",
+          "name": "OpenAi account"
+        }
+      },
+      "typeVersion": 1.2
+    },
+    {
+      "id": "92c63e40-4fa4-4ccf-a431-23de837caba7",
+      "name": "Sheet Tool: Write Report",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        4300,
+        1050
+      ],
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $fromAI('sheetName', 'The sheet tab name to write to', 'string') }}"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "BqCsF5fexBb586JV",
+          "name": "Google Sheets account"
+        }
+      },
+      "typeVersion": 4.5
+    },
+    {
+      "id": "9ff35027-eed4-418b-b8a3-d480e46a8885",
+      "name": "Master Report Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        4350,
+        600
+      ],
+      "parameters": {
+        "text": "=You are the MASTER SEO ANALYST. Synthesize ALL specialist reports into a comprehensive client-ready executive audit.\n\nCLIENT: {{ $json.clientName }}\nWEBSITE: {{ $json.websiteUrl }}\nAUDIT DATE: {{ $json.auditDate }}\nCOMPETITORS: {{ $json.competitors.join(', ') }}\nTARGET LOCATION: {{ $json.targetLocation }}\nGOALS: {{ $json.goals }}\n\nALL SPECIALIST REPORTS:\n{{ JSON.stringify($json.reports, null, 2) }}\n\n## PRODUCE THE FINAL AUDIT WITH THESE EXACT SECTIONS:\n\n### EXECUTIVE SUMMARY\n- Overall site health score (0-100)\n- 3-5 critical findings\n- 3-5 biggest opportunities\n- Estimated SEO impact potential\n\n### SECTION 1: TECHNICAL REPORT\nSummarize technical audit findings:\n- Site health score and key metrics\n- Core Web Vitals (Mobile + Desktop)\n- Crawlability & indexing status\n- HTTPS & security\n- Sitemap & robots.txt\n- Top technical issues by severity\n\n### SECTION 2: KEYWORD & CONTENT REPORT\n- Keyword universe summary\n- Top keyword clusters\n- Content gaps and opportunities\n- AEO opportunities\n- On-page issues (metadata, thin content, schema)\n\n### SECTION 3: BACKLINK ANALYSIS REPORT\n- Backlink profile summary\n- Domain rating & authority\n- Anchor text profile\n- Toxic backlink assessment\n- Link building opportunities\n\n### SECTION 4: COMPETITOR ANALYSIS REPORT\n- Competitive positioning summary\n- Technical comparison\n- Keyword gap\n- Backlink gap\n- Competitive advantages & disadvantages\n\n### SECTION 5: PRIORITY ACTION LIST\nCreate a numbered priority list (top 20) with:\n| # | Action | Category | Priority | Effort | Expected Impact |\nOrdered by impact (highest first).\n\n### SECTION 6: 90-DAY ROADMAP\n- Month 1: Quick wins and critical fixes\n- Month 2: Content and keyword optimization\n- Month 3: Link building and competitive moves\n\nUse the Google Sheets tool to save key data to the report spreadsheet.\nWrite the executive summary to sheet 'Executive Summary'.\nWrite priority actions to sheet 'Priority Actions'.\nWrite the technical metrics to sheet 'Technical Metrics'.",
+        "options": {
+          "systemMessage": "You are the master SEO analyst. Produce a comprehensive, professional audit report. Be data-driven and specific. Format clearly with headers and tables."
+        }
+      },
+      "typeVersion": 1.7
+    },
+    {
+      "id": "ca8fbda9-7a77-4406-b862-8778b2064e1b",
+      "name": "Format Sheet Output",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        4700,
+        600
+      ],
+      "parameters": {
+        "jsCode": "// Format the master report for Google Sheets output\nconst report = $input.first().json;\nconst clientVars = $('Set Client Variables').first().json;\nconst today = new Date().toISOString().split('T')[0];\n\n// Extract the text output from the agent\nconst reportText = report.output || report.text || JSON.stringify(report);\n\nreturn [{ json: {\n  AuditID: 'SEO_AUDIT_' + today,\n  ClientName: clientVars.clientName,\n  WebsiteURL: clientVars.websiteUrl,\n  AuditDate: today,\n  Competitors: [clientVars.competitor1, clientVars.competitor2, clientVars.competitor3].filter(Boolean).join(', '),\n  TargetLocation: clientVars.targetLocation,\n  Goals: clientVars.goals,\n  FullReport: reportText.substring(0, 50000),\n  Status: 'Complete'\n}}];"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "f2f4366f-19e3-4df9-b5c6-644ab414771c",
+      "name": "Save Master Report",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        5000,
+        500
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Audit Reports"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "BqCsF5fexBb586JV",
+          "name": "Google Sheets account"
+        }
+      },
+      "typeVersion": 4.5
+    },
+    {
+      "id": "952d043f-6cb0-4316-b8d5-21a8815ebafd",
+      "name": "Update Status: Complete",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        5000,
+        700
+      ],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Audit Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Complete",
+            "CompletedDate": "={{ new Date().toISOString().split('T')[0] }}"
+          }
+        },
+        "options": {},
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Client Name",
+              "lookupValue": "={{ $('Set Client Variables').first().json.clientName }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "BqCsF5fexBb586JV",
+          "name": "Google Sheets account"
+        }
+      },
+      "typeVersion": 4.5
+    },
+    {
+      "id": "15eeab34-2a1c-4379-85e1-28173edb61f0",
+      "name": "Send Audit Email",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        5000,
+        900
+      ],
+      "parameters": {
+        "sendTo": "={{ $('Set Client Variables').first().json.clientEmail }}",
+        "subject": "=SEO Audit Report - {{ $('Set Client Variables').first().json.clientName }} - {{ new Date().toISOString().split('T')[0] }}",
+        "message": "=Hi,\n\nYour comprehensive SEO audit for {{ $('Set Client Variables').first().json.websiteUrl }} is complete.\n\nPlease find the detailed report in the shared Google Sheet.\n\nKey sections included:\n\u2705 Technical Audit & Core Web Vitals\n\u2705 Keyword Research & Content Analysis\n\u2705 On-Page SEO Audit\n\u2705 Backlink Profile Analysis\n\u2705 Competitor Analysis\n\u2705 Priority Action List & 90-Day Roadmap\n\nReport Summary:\n{{ $json.FullReport ? $json.FullReport.substring(0, 3000) : 'Please check the Google Sheet for full details.' }}\n\nBest regards,\nSEO Audit System",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PKO4bRJXrUUozaOL",
+          "name": "Gmail account"
+        }
+      },
+      "typeVersion": 2.1
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Audit Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Audit Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Audit Queue": {
+      "main": [
+        [
+          {
+            "node": "Filter Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Pending": {
+      "main": [
+        [
+          {
+            "node": "Set Client Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Client Variables": {
+      "main": [
+        [
+          {
+            "node": "Update Status: In Progress",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "PageSpeed Mobile",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "PageSpeed Desktop",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GSC: Query Performance",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GSC: Page Performance",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GSC: Sitemaps",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GSC: Country Performance",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch robots.txt",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTPS Redirect Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Full Site Crawl (Apify)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Apify SEO Audit",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Scrape Competitor Keywords",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Ahrefs Backlink Scrape",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Competitor URLs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check GA4 Available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PageSpeed Mobile": {
+      "main": [
+        [
+          {
+            "node": "Format PageSpeed Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PageSpeed Desktop": {
+      "main": [
+        [
+          {
+            "node": "Format PageSpeed Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch robots.txt": {
+      "main": [
+        [
+          {
+            "node": "Parse robots.txt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTPS Redirect Check": {
+      "main": [
+        [
+          {
+            "node": "Analyze HTTPS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Full Site Crawl (Apify)": {
+      "main": [
+        [
+          {
+            "node": "Process Crawl Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format PageSpeed Results": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GSC: Query Performance": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GSC: Page Performance": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GSC: Sitemaps": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GSC: Country Performance": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse robots.txt": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze HTTPS": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Crawl Data": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify SEO Audit": {
+      "main": [
+        [
+          {
+            "node": "Merge Technical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Technical Data": {
+      "main": [
+        [
+          {
+            "node": "Process Technical Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Technical Merge": {
+      "main": [
+        [
+          {
+            "node": "Technical Audit Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract GSC Keywords",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare On-Page Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI: Technical Audit": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Technical Audit Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract GSC Keywords": {
+      "main": [
+        [
+          {
+            "node": "Keyword Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI: Keyword Research": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Keyword Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare On-Page Data": {
+      "main": [
+        [
+          {
+            "node": "On-Page Audit Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI: On-Page Audit": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "On-Page Audit Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ahrefs Backlink Scrape": {
+      "main": [
+        [
+          {
+            "node": "Process Backlink Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Backlink Data": {
+      "main": [
+        [
+          {
+            "node": "Backlink Audit Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI: Backlink Audit": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Backlink Audit Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Competitor URLs": {
+      "main": [
+        [
+          {
+            "node": "Competitor PageSpeed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Competitor Backlinks Scrape",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Competitor PageSpeed": {
+      "main": [
+        [
+          {
+            "node": "Format Competitor PageSpeed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Competitor PageSpeed": {
+      "main": [
+        [
+          {
+            "node": "Merge Competitor Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Competitor Backlinks Scrape": {
+      "main": [
+        [
+          {
+            "node": "Merge Competitor Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Competitor Data": {
+      "main": [
+        [
+          {
+            "node": "Competitor Analysis Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI: Competitor Analysis": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Competitor Analysis Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check GA4 Available": {
+      "main": [
+        [
+          {
+            "node": "Fetch GA4: Traffic Overview",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch GA4: Top Pages",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch GA4: Traffic Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch GA4: Traffic Overview": {
+      "main": [
+        [
+          {
+            "node": "Merge GA4 Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch GA4: Top Pages": {
+      "main": [
+        [
+          {
+            "node": "Merge GA4 Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch GA4: Traffic Sources": {
+      "main": [
+        [
+          {
+            "node": "Merge GA4 Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge GA4 Data": {
+      "main": [
+        [
+          {
+            "node": "Process GA4 Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Technical Audit Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge All Reports",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keyword Research Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge All Reports",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On-Page Audit Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge All Reports",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backlink Audit Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge All Reports",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Competitor Analysis Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge All Reports",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process GA4 Data": {
+      "main": [
+        [
+          {
+            "node": "Merge All Reports",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All Reports": {
+      "main": [
+        [
+          {
+            "node": "Compile Final Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compile Final Data": {
+      "main": [
+        [
+          {
+            "node": "Master Report Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI: Master Report": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Master Report Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Tool: Write Report": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Report Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Master Report Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Sheet Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Sheet Output": {
+      "main": [
+        [
+          {
+            "node": "Save Master Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Status: Complete",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Audit Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "timezone": "America/New_York",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "staticData": null
+}

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-26T20:57:56.496Z",
+  "updatedAt": "2026-02-26T22:00:53.555Z",
   "createdAt": "2026-02-26T13:07:12.522Z",
   "id": "c3YJOMgusFdagAdU",
   "name": "\ud83d\udd0d Complete SEO Audit System v4.0 (Google Sheet Input)",
@@ -1557,8 +1557,8 @@
       "typeVersion": 2.1
     },
     {
-      "id": "4036a47f-1681-4e36-aae3-af838b32b59a",
-      "name": "Test Webhook Trigger",
+      "id": "33361cd6-5fb0-429b-93c3-614aa6c777a7",
+      "name": "Audit Trigger Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -1566,13 +1566,13 @@
         100
       ],
       "parameters": {
-        "path": "run-seo-audit",
+        "path": "run-audit-1139d598",
         "httpMethod": "GET",
         "responseMode": "onReceived",
-        "options": {},
-        "responseData": "allEntries"
+        "responseData": "allEntries",
+        "options": {}
       },
-      "webhookId": "run-seo-audit"
+      "webhookId": "0f4d3fe6-db8e-4d90-9ae5-b34ac88ce7b8"
     }
   ],
   "connections": {
@@ -2253,7 +2253,12 @@
         ]
       ]
     },
-    "Test Webhook Trigger": {
+    "Update Status: In Progress": {
+      "main": [
+        []
+      ]
+    },
+    "Audit Trigger Webhook": {
       "main": [
         [
           {
@@ -2262,11 +2267,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "Update Status: In Progress": {
-      "main": [
-        []
       ]
     }
   },
@@ -2287,9 +2287,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "b2d1ca84-326c-4530-ba18-f79f39b453b9",
-  "activeVersionId": "b2d1ca84-326c-4530-ba18-f79f39b453b9",
-  "versionCounter": 30,
+  "versionId": "01e1e663-ccbc-46b8-8e4e-a9510854d1c3",
+  "activeVersionId": "01e1e663-ccbc-46b8-8e4e-a9510854d1c3",
+  "versionCounter": 37,
   "triggerCount": 2,
   "shared": [
     {
@@ -2350,9 +2350,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-02-26T20:57:56.499Z",
-    "createdAt": "2026-02-26T20:57:56.499Z",
-    "versionId": "b2d1ca84-326c-4530-ba18-f79f39b453b9",
+    "updatedAt": "2026-02-26T22:00:53.563Z",
+    "createdAt": "2026-02-26T22:00:53.563Z",
+    "versionId": "01e1e663-ccbc-46b8-8e4e-a9510854d1c3",
     "workflowId": "c3YJOMgusFdagAdU",
     "nodes": [
       {
@@ -3905,8 +3905,8 @@
         "typeVersion": 2.1
       },
       {
-        "id": "4036a47f-1681-4e36-aae3-af838b32b59a",
-        "name": "Test Webhook Trigger",
+        "id": "33361cd6-5fb0-429b-93c3-614aa6c777a7",
+        "name": "Audit Trigger Webhook",
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
         "position": [
@@ -3914,13 +3914,13 @@
           100
         ],
         "parameters": {
-          "path": "run-seo-audit",
+          "path": "run-audit-1139d598",
           "httpMethod": "GET",
           "responseMode": "onReceived",
-          "options": {},
-          "responseData": "allEntries"
+          "responseData": "allEntries",
+          "options": {}
         },
-        "webhookId": "run-seo-audit"
+        "webhookId": "0f4d3fe6-db8e-4d90-9ae5-b34ac88ce7b8"
       }
     ],
     "connections": {
@@ -4601,7 +4601,12 @@
           ]
         ]
       },
-      "Test Webhook Trigger": {
+      "Update Status: In Progress": {
+        "main": [
+          []
+        ]
+      },
+      "Audit Trigger Webhook": {
         "main": [
           [
             {
@@ -4610,11 +4615,6 @@
               "index": 0
             }
           ]
-        ]
-      },
-      "Update Status: In Progress": {
-        "main": [
-          []
         ]
       }
     },

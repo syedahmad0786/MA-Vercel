@@ -1,5 +1,11 @@
 {
+  "updatedAt": "2026-02-26T13:21:52.457Z",
+  "createdAt": "2026-02-26T13:07:12.522Z",
+  "id": "c3YJOMgusFdagAdU",
   "name": "\ud83d\udd0d Complete SEO Audit System v4.0 (Google Sheet Input)",
+  "description": null,
+  "active": false,
+  "isArchived": false,
   "nodes": [
     {
       "id": "f3f94b70-b392-4af2-98fb-91a412b068c7",
@@ -167,8 +173,8 @@
       },
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "BqCsF5fexBb586JV",
-          "name": "Google Sheets account"
+          "id": "NNdDv43lcKI4YPCA",
+          "name": "Google Sheets - SEO Audit"
         }
       },
       "typeVersion": 4.5
@@ -327,8 +333,8 @@
       },
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "BqCsF5fexBb586JV",
-          "name": "Google Sheets account"
+          "id": "NNdDv43lcKI4YPCA",
+          "name": "Google Sheets - SEO Audit"
         }
       },
       "typeVersion": 4.5
@@ -405,8 +411,8 @@
       },
       "credentials": {
         "googleOAuth2Api": {
-          "id": "03TmsNrvmztxYMfp",
-          "name": "Google account"
+          "id": "aoRq1w7E6JkcSIUJ",
+          "name": "Google OAuth - SEO Audit"
         }
       },
       "typeVersion": 4.2
@@ -433,8 +439,8 @@
       },
       "credentials": {
         "googleOAuth2Api": {
-          "id": "03TmsNrvmztxYMfp",
-          "name": "Google account"
+          "id": "aoRq1w7E6JkcSIUJ",
+          "name": "Google OAuth - SEO Audit"
         }
       },
       "typeVersion": 4.2
@@ -458,8 +464,8 @@
       },
       "credentials": {
         "googleOAuth2Api": {
-          "id": "03TmsNrvmztxYMfp",
-          "name": "Google account"
+          "id": "aoRq1w7E6JkcSIUJ",
+          "name": "Google OAuth - SEO Audit"
         }
       },
       "typeVersion": 4.2
@@ -486,8 +492,8 @@
       },
       "credentials": {
         "googleOAuth2Api": {
-          "id": "03TmsNrvmztxYMfp",
-          "name": "Google account"
+          "id": "aoRq1w7E6JkcSIUJ",
+          "name": "Google OAuth - SEO Audit"
         }
       },
       "typeVersion": 4.2
@@ -1122,8 +1128,8 @@
       },
       "credentials": {
         "googleAnalyticsOAuth2": {
-          "id": "5QwNdmVAHZVRe1S2",
-          "name": "Google Analytics account"
+          "id": "mEhcpzTtzTUEQJ6O",
+          "name": "Google Analytics - SEO Audit"
         }
       },
       "typeVersion": 2
@@ -1172,8 +1178,8 @@
       },
       "credentials": {
         "googleAnalyticsOAuth2": {
-          "id": "5QwNdmVAHZVRe1S2",
-          "name": "Google Analytics account"
+          "id": "mEhcpzTtzTUEQJ6O",
+          "name": "Google Analytics - SEO Audit"
         }
       },
       "typeVersion": 2
@@ -1222,8 +1228,8 @@
       },
       "credentials": {
         "googleAnalyticsOAuth2": {
-          "id": "5QwNdmVAHZVRe1S2",
-          "name": "Google Analytics account"
+          "id": "mEhcpzTtzTUEQJ6O",
+          "name": "Google Analytics - SEO Audit"
         }
       },
       "typeVersion": 2
@@ -1336,8 +1342,8 @@
       },
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "BqCsF5fexBb586JV",
-          "name": "Google Sheets account"
+          "id": "NNdDv43lcKI4YPCA",
+          "name": "Google Sheets - SEO Audit"
         }
       },
       "typeVersion": 4.5
@@ -1398,8 +1404,8 @@
       },
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "BqCsF5fexBb586JV",
-          "name": "Google Sheets account"
+          "id": "NNdDv43lcKI4YPCA",
+          "name": "Google Sheets - SEO Audit"
         }
       },
       "typeVersion": 4.5
@@ -1443,8 +1449,8 @@
       },
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "BqCsF5fexBb586JV",
-          "name": "Google Sheets account"
+          "id": "NNdDv43lcKI4YPCA",
+          "name": "Google Sheets - SEO Audit"
         }
       },
       "typeVersion": 4.5
@@ -1465,8 +1471,8 @@
       },
       "credentials": {
         "gmailOAuth2": {
-          "id": "PKO4bRJXrUUozaOL",
-          "name": "Gmail account"
+          "id": "wjeSzAGckZam6R4s",
+          "name": "Gmail - SEO Audit"
         }
       },
       "typeVersion": 2.1
@@ -2158,7 +2164,73 @@
     "errorWorkflow": "",
     "timezone": "America/New_York",
     "saveDataSuccessExecution": "all",
-    "saveDataErrorExecution": "all"
+    "saveDataErrorExecution": "all",
+    "availableInMCP": false
   },
-  "staticData": null
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "9b798990-58c6-4976-a23d-17bb225e9d32",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-26T13:07:12.530Z",
+      "createdAt": "2026-02-26T13:07:12.530Z",
+      "role": "workflow:owner",
+      "workflowId": "c3YJOMgusFdagAdU",
+      "projectId": "WHikqY6O9I1sPtUN",
+      "project": {
+        "updatedAt": "2025-12-09T20:15:45.964Z",
+        "createdAt": "2025-12-09T19:57:58.234Z",
+        "id": "WHikqY6O9I1sPtUN",
+        "name": "Adam Wolfe <adam@modern-amenities.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-09T19:57:58.234Z",
+            "createdAt": "2025-12-09T19:57:58.234Z",
+            "userId": "24967583-4335-4bb3-91bf-613a13f796eb",
+            "projectId": "WHikqY6O9I1sPtUN",
+            "user": {
+              "updatedAt": "2026-02-26T12:26:26.000Z",
+              "createdAt": "2025-12-09T19:57:46.716Z",
+              "id": "24967583-4335-4bb3-91bf-613a13f796eb",
+              "email": "adam@modern-amenities.com",
+              "firstName": "Adam",
+              "lastName": "Wolfe",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-09T20:15:55.197Z",
+                "personalization_survey_n8n_version": "1.123.4",
+                "companySize": "20-99",
+                "companyType": "saas",
+                "role": "business-owner",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "kyppyCt1rM63I2bp",
+                "userActivatedAt": 1765319141134,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766787761202
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-26",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
 }

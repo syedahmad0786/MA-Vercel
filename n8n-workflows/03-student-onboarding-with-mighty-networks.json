@@ -628,28 +628,6 @@
               "type": "string",
               "readOnly": false,
               "removed": false
-            },
-            {
-              "id": "MN Invite Granted",
-              "displayName": "MN Invite Granted",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "MN Invite ID",
-              "displayName": "MN Invite ID",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -6233,28 +6211,6 @@
               "type": "string",
               "readOnly": false,
               "removed": false
-            },
-            {
-              "id": "MN Invite Granted",
-              "displayName": "MN Invite Granted",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "MN Invite ID",
-              "displayName": "MN Invite ID",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -8225,15 +8181,6 @@
         "url": "https://api.mn.co/admin/v1/networks/21685656/invites",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"recipient_email\": \"{{ $('Parse & Merge Opportunity Data1').item.json.email }}\",\n  \"recipient_first_name\": \"{{ $('Parse & Merge Opportunity Data1').item.json.first_name }}\",\n  \"recipient_last_name\": \"{{ $('Parse & Merge Opportunity Data1').item.json.lead_name.split(' ').slice(1).join(' ') }}\"\n}",
@@ -8246,7 +8193,7 @@
           "timeout": 20000
         }
       },
-      "id": "dfa7f415-5a7f-43e2-8f6b-b0aa227364e5",
+      "id": "c02cf505-8b8b-489a-aa0e-be2641201062",
       "name": "Invite to Mighty Networks",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -8254,8 +8201,6 @@
         -1856,
         560
       ],
-      "retryOnFail": true,
-      "maxTries": 2,
       "onError": "continueRegularOutput",
       "credentials": {
         "httpHeaderAuth": {
@@ -8275,7 +8220,7 @@
           },
           "conditions": [
             {
-              "id": "0292e626-54ac-4d7f-a650-a3da6cacf796",
+              "id": "8edaa017-dffa-4daa-9754-d0d7ef3f3b1e",
               "leftValue": "={{ $json.statusCode }}",
               "rightValue": 200,
               "operator": {
@@ -8294,7 +8239,7 @@
         -1632,
         560
       ],
-      "id": "2195d9d3-25ed-44da-9b4d-2592a83d74b4",
+      "id": "22b59cb1-bffe-4dad-bd02-14a106106734",
       "name": "Check MN Invite Success"
     },
     {
@@ -8350,8 +8295,7 @@
               "id": "MN Invite ID",
               "displayName": "MN Invite ID",
               "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
+              "defaultMatch": true,
               "display": true,
               "type": "string",
               "readOnly": false,
@@ -8367,260 +8311,12 @@
         -1408,
         460
       ],
-      "id": "abd9bbd5-7c3d-427f-b1bd-910f1c9eb074",
+      "id": "c5b5ff68-33e6-4c77-8002-c491a3ee4210",
       "name": "Update Airtable: MN Invite Status",
       "credentials": {
         "airtableTokenApi": {
-          "id": "",
-          "name": "Airtable Personal Access Token"
-        }
-      },
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "authentication": "oAuth2",
-        "select": "channel",
-        "channelId": {
-          "__rl": true,
-          "value": "C0A11F18N5T",
-          "mode": "list",
-          "cachedResultName": "student-onboarding-n8n"
-        },
-        "text": "=\u26a0\ufe0f *Mighty Networks Invite Failed*\n\n*Client:* {{ $('Parse & Merge Opportunity Data1').item.json.lead_name }}\n*Email:* {{ $('Parse & Merge Opportunity Data1').item.json.email }}\n*Lead ID:* {{ $('Parse & Merge Opportunity Data1').item.json.lead_id }}\n\n*Error:* {{ $json.error || $json.body?.error || 'Unknown error' }}\n*Status Code:* {{ $json.statusCode || 'N/A' }}\n\n\ud83d\udc49 Manual invite required to Mighty Networks community",
-        "otherOptions": {}
-      },
-      "id": "18ed7e6d-3e2c-4c95-a9fc-da981f93952b",
-      "name": "Alert: MN Invite Failed",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.1,
-      "position": [
-        -1408,
-        660
-      ],
-      "credentials": {
-        "slackOAuth2Api": {
-          "id": "kij3VguUqWAdnZCQ",
-          "name": "Slack account"
-        }
-      },
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "operation": "create",
-        "base": {
-          "mode": "list",
-          "__rl": true,
-          "cachedResultName": "Vendingpreneurs (Copy 10-15-2024)",
-          "value": "appgqED05AlPLi0ar"
-        },
-        "table": {
-          "mode": "id",
-          "__rl": true,
-          "cachedResultName": "Onboarding Errors",
-          "value": "tblaQ6fpHGhRs56sH"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Lead ID": "={{ $('Parse & Merge Opportunity Data1').item.json.lead_id }}",
-            "Timestamp": "={{ $now.toISO() }}",
-            "Execution ID": "={{ $execution.id }}",
-            "Lead Name": "={{ $('Parse & Merge Opportunity Data1').item.json.lead_name }}",
-            "Error Message": "={{ $json.error_message || $json.error || $json.body?.error || 'No error message' }}",
-            "Error Node": "Invite to Mighty Networks",
-            "Email": "={{ $('Parse & Merge Opportunity Data1').item.json.email }}",
-            "Status": "New",
-            "Error Type": "MN Invite"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "Lead Name",
-              "displayName": "Lead Name",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Email",
-              "displayName": "Email",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Lead ID",
-              "displayName": "Lead ID",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Error Type",
-              "displayName": "Error Type",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "options",
-              "options": [
-                {
-                  "name": "Airtable Student Record",
-                  "value": "Airtable Student Record"
-                },
-                {
-                  "name": "Airtable Client Record",
-                  "value": "Airtable Client Record"
-                },
-                {
-                  "name": "Skool Invite",
-                  "value": "Skool Invite"
-                },
-                {
-                  "name": "Intercom Contact",
-                  "value": "Intercom Contact"
-                },
-                {
-                  "name": "Close CRM Update",
-                  "value": "Close CRM Update"
-                },
-                {
-                  "name": "Email Validation",
-                  "value": "Email Validation"
-                },
-                {
-                  "name": "Unknown",
-                  "value": "Unknown"
-                }
-              ],
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Error Message",
-              "displayName": "Error Message",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Error Node",
-              "displayName": "Error Node",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Timestamp",
-              "displayName": "Timestamp",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Execution ID",
-              "displayName": "Execution ID",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Raw Error Data",
-              "displayName": "Raw Error Data",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Status",
-              "displayName": "Status",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "options",
-              "options": [
-                {
-                  "name": "New",
-                  "value": "New"
-                },
-                {
-                  "name": "Investigating",
-                  "value": "Investigating"
-                },
-                {
-                  "name": "Resolved",
-                  "value": "Resolved"
-                },
-                {
-                  "name": "Ignored",
-                  "value": "Ignored"
-                }
-              ],
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Resolution Notes",
-              "displayName": "Resolution Notes",
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.airtable",
-      "typeVersion": 2.1,
-      "position": [
-        -1184,
-        660
-      ],
-      "id": "922331d9-0bbc-4ec6-a5fc-3ad7b1a64cf4",
-      "name": "Log Error to Airtable5",
-      "credentials": {
-        "airtableTokenApi": {
-          "id": "",
-          "name": "Airtable Personal Access Token"
+          "id": "R7CZf7GZvAyib012",
+          "name": "N8N Token For Airtable"
         }
       },
       "onError": "continueRegularOutput"
@@ -8696,12 +8392,90 @@
         -1408,
         360
       ],
-      "id": "495b3714-6206-446a-9798-16638fe7751c",
+      "id": "91839ada-396a-4b89-a386-74c8935ac95d",
       "name": "Update Client: MN Invite Status",
       "credentials": {
         "airtableTokenApi": {
-          "id": "",
-          "name": "Airtable Personal Access Token"
+          "id": "R7CZf7GZvAyib012",
+          "name": "N8N Token For Airtable"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A11F18N5T",
+          "mode": "list",
+          "cachedResultName": "student-onboarding-n8n"
+        },
+        "text": "=\u26a0\ufe0f *Mighty Networks Invite Failed*\n\n*Client:* {{ $('Parse & Merge Opportunity Data1').item.json.lead_name }}\n*Email:* {{ $('Parse & Merge Opportunity Data1').item.json.email }}\n*Lead ID:* {{ $('Parse & Merge Opportunity Data1').item.json.lead_id }}\n\n*Error:* {{ $json.error || 'Unknown error' }}\n\n\ud83d\udc49 Manual invite required to Mighty Networks community",
+        "otherOptions": {}
+      },
+      "id": "ae169515-299f-4484-935e-b1b1ef958020",
+      "name": "Alert: MN Invite Failed",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        -1408,
+        660
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "kij3VguUqWAdnZCQ",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "mode": "list",
+          "__rl": true,
+          "cachedResultName": "Vendingpreneurs (Copy 10-15-2024)",
+          "value": "appgqED05AlPLi0ar"
+        },
+        "table": {
+          "mode": "id",
+          "__rl": true,
+          "cachedResultName": "Onboarding Errors",
+          "value": "tblaQ6fpHGhRs56sH"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID": "={{ $('Parse & Merge Opportunity Data1').item.json.lead_id }}",
+            "Timestamp": "={{ $now.toISO() }}",
+            "Execution ID": "={{ $execution.id }}",
+            "Lead Name": "={{ $('Parse & Merge Opportunity Data1').item.json.lead_name }}",
+            "Error Message": "={{ $json.error_message || $json.error || 'No error message' }}",
+            "Error Node": "Invite to Mighty Networks",
+            "Email": "={{ $('Parse & Merge Opportunity Data1').item.json.email }}",
+            "Status": "New",
+            "Error Type": "MN Invite"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1184,
+        660
+      ],
+      "id": "75df438a-d284-4ad6-9881-e302e80d6e8d",
+      "name": "Log Error to Airtable5",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "R7CZf7GZvAyib012",
+          "name": "N8N Token For Airtable"
         }
       },
       "onError": "continueRegularOutput"
@@ -9101,8 +8875,6 @@
   "settings": {
     "executionOrder": "v1",
     "saveDataSuccessExecution": "all",
-    "saveExecutionProgress": true,
-    "callerPolicy": "workflowsFromSameOwner",
-    "availableInMCP": false
+    "saveExecutionProgress": true
   }
 }

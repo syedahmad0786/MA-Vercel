@@ -8178,12 +8178,12 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.mn.co/admin/v1/networks/21685656/invites",
+        "url": "https://api.mn.co/admin/v1/networks/21685656/members",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"recipient_email\": \"{{ $('Parse & Merge Opportunity Data1').item.json.email }}\",\n  \"recipient_first_name\": \"{{ $('Parse & Merge Opportunity Data1').item.json.first_name }}\",\n  \"recipient_last_name\": \"{{ $('Parse & Merge Opportunity Data1').item.json.lead_name.split(' ').slice(1).join(' ') }}\"\n}",
+        "jsonBody": "={\n  \"email\": \"{{ $('Parse & Merge Opportunity Data1').item.json.email }}\",\n  \"first_name\": \"{{ $('Parse & Merge Opportunity Data1').item.json.first_name }}\",\n  \"last_name\": \"{{ $('Parse & Merge Opportunity Data1').item.json.lead_name.split(' ').slice(1).join(' ') }}\",\n  \"role\": \"contributor\",\n  \"send_welcome_email\": true\n}",
         "options": {
           "response": {
             "response": {
@@ -8216,13 +8216,13 @@
             "caseSensitive": true,
             "leftValue": "",
             "typeValidation": "strict",
-            "version": 3
+            "version": 2
           },
           "conditions": [
             {
-              "id": "8edaa017-dffa-4daa-9754-d0d7ef3f3b1e",
+              "id": "9c2284c0-0476-4bd4-a01d-c6005107ef4a",
               "leftValue": "={{ $json.statusCode }}",
-              "rightValue": 200,
+              "rightValue": 201,
               "operator": {
                 "type": "number",
                 "operation": "equals"
@@ -8263,8 +8263,8 @@
           "mappingMode": "defineBelow",
           "value": {
             "id": "={{ $('Create Airtable Student Record2').item.json.id }}",
-            "MN Invite Granted": "={{ $json.statusMessage || 'OK' }}",
-            "MN Invite ID": "={{ $json.body.id }}"
+            "MN Invite Granted": "={{ $json.statusMessage || 'Created' }}",
+            "MN Invite ID": "={{ String($json.body.id) }}"
           },
           "matchingColumns": [
             "id"
@@ -8342,8 +8342,8 @@
           "mappingMode": "defineBelow",
           "value": {
             "Personal Email": "={{ $('Parse & Merge Opportunity Data1').item.json.email }}",
-            "MN Invite Granted": "={{ $json.statusMessage || 'OK' }}",
-            "MN Invite ID": "={{ $json.body.id }}"
+            "MN Invite Granted": "={{ $json.statusMessage || 'Created' }}",
+            "MN Invite ID": "={{ String($json.body.id) }}"
           },
           "matchingColumns": [
             "Personal Email"

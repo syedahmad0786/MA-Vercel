@@ -8211,39 +8211,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "9c2284c0-0476-4bd4-a01d-c6005107ef4a",
-              "leftValue": "={{ $json.statusCode }}",
-              "rightValue": 201,
-              "operator": {
-                "type": "number",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        -1632,
-        560
-      ],
-      "id": "22b59cb1-bffe-4dad-bd02-14a106106734",
-      "name": "Check MN Invite Success"
-    },
-    {
-      "parameters": {
         "operation": "upsert",
         "base": {
           "__rl": true,
@@ -8263,8 +8230,8 @@
           "mappingMode": "defineBelow",
           "value": {
             "id": "={{ $('Create Airtable Student Record2').item.json.id }}",
-            "MN Invite Granted": "={{ $json.statusMessage || 'Created' }}",
-            "MN Invite ID": "={{ String($json.body.id) }}"
+            "MN Invite Granted": "=OK",
+            "MN Invite ID": "={{ String($json.body.id || '') }}"
           },
           "matchingColumns": [
             "id"
@@ -8342,8 +8309,8 @@
           "mappingMode": "defineBelow",
           "value": {
             "Personal Email": "={{ $('Parse & Merge Opportunity Data1').item.json.email }}",
-            "MN Invite Granted": "={{ $json.statusMessage || 'Created' }}",
-            "MN Invite ID": "={{ String($json.body.id) }}"
+            "MN Invite Granted": "=OK",
+            "MN Invite ID": "={{ String($json.body.id || '') }}"
           },
           "matchingColumns": [
             "Personal Email"
@@ -8404,6 +8371,136 @@
     },
     {
       "parameters": {
+        "method": "POST",
+        "url": "=https://api.mn.co/admin/v1/networks/21685656/plans/{{ (['Gold', 'Platinum'].some(t => ($('Parse & Merge Opportunity Data1').item.json._opportunity_data.lead_custom['*Program Tier Purchased (N)'] || '').toLowerCase().startsWith(t.toLowerCase()))) ? '1960485' : '1960487' }}/invites?email={{ encodeURIComponent($('Parse & Merge Opportunity Data1').item.json.email) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "id": "e7a8a47b-6152-438e-9129-78510f78e482",
+      "name": "Add to MN Plan",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1184,
+        360
+      ],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ktXeeJy6e0qbWKrJ",
+          "name": "Mighty Networks API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "684d3da3-54f9-465f-8424-ab30f4ec4a52",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -960,
+        360
+      ],
+      "id": "d16e1964-2347-4215-9a4e-8d43829af28e",
+      "name": "Check MN Plan Success"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appgqED05AlPLi0ar",
+          "mode": "list",
+          "cachedResultName": "Vendingpreneurs (Copy 10-15-2024)"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMLFYTeoqrtmgXQ",
+          "mode": "list",
+          "cachedResultName": "Student Onboarding"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create Airtable Student Record2').item.json.id }}",
+            "MN Invite Granted": "={{ (['Gold', 'Platinum'].some(t => ($('Parse & Merge Opportunity Data1').item.json._opportunity_data.lead_custom['*Program Tier Purchased (N)'] || '').toLowerCase().startsWith(t.toLowerCase()))) ? 'OK - Gold & Platinum Plan' : 'OK - Bronze & Silver Plan' }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "MN Invite Granted",
+              "displayName": "MN Invite Granted",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -736,
+        260
+      ],
+      "id": "8bdc3255-7ddf-4698-b529-5978ac954838",
+      "name": "Update Student: MN Plan",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "R7CZf7GZvAyib012",
+          "name": "N8N Token For Airtable"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
         "authentication": "oAuth2",
         "select": "channel",
         "channelId": {
@@ -8412,16 +8509,16 @@
           "mode": "list",
           "cachedResultName": "student-onboarding-n8n"
         },
-        "text": "=\u26a0\ufe0f *Mighty Networks Invite Failed*\n\n*Client:* {{ $('Parse & Merge Opportunity Data1').item.json.lead_name }}\n*Email:* {{ $('Parse & Merge Opportunity Data1').item.json.email }}\n*Lead ID:* {{ $('Parse & Merge Opportunity Data1').item.json.lead_id }}\n\n*Error:* {{ $json.error || 'Unknown error' }}\n\n\ud83d\udc49 Manual invite required to Mighty Networks community",
+        "text": "=\u26a0\ufe0f *Mighty Networks Plan Assignment Failed*\n\n*Client:* {{ $('Parse & Merge Opportunity Data1').item.json.lead_name }}\n*Email:* {{ $('Parse & Merge Opportunity Data1').item.json.email }}\n*Tier:* {{ $('Parse & Merge Opportunity Data1').item.json._opportunity_data.lead_custom['*Program Tier Purchased (N)'] }}\n\n*Error:* {{ $json.error || $json.body || 'Unknown error' }}\n\n\ud83d\udc49 Manual plan assignment required in Mighty Networks",
         "otherOptions": {}
       },
-      "id": "ae169515-299f-4484-935e-b1b1ef958020",
-      "name": "Alert: MN Invite Failed",
+      "id": "a728ccd3-d42b-4fb4-bb03-ee842afd5033",
+      "name": "Alert: MN Plan Failed",
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
       "position": [
-        -1408,
-        660
+        -736,
+        460
       ],
       "credentials": {
         "slackOAuth2Api": {
@@ -8453,11 +8550,11 @@
             "Timestamp": "={{ $now.toISO() }}",
             "Execution ID": "={{ $execution.id }}",
             "Lead Name": "={{ $('Parse & Merge Opportunity Data1').item.json.lead_name }}",
-            "Error Message": "={{ $json.error_message || $json.error || 'No error message' }}",
-            "Error Node": "Invite to Mighty Networks",
+            "Error Message": "={{ $json.error_message || $json.error || 'MN member/plan assignment failed' }}",
+            "Error Node": "Add to MN Plan",
             "Email": "={{ $('Parse & Merge Opportunity Data1').item.json.email }}",
             "Status": "New",
-            "Error Type": "MN Invite"
+            "Error Type": "MN Plan"
           },
           "matchingColumns": [],
           "schema": []
@@ -8467,11 +8564,11 @@
       "type": "n8n-nodes-base.airtable",
       "typeVersion": 2.1,
       "position": [
-        -1184,
-        660
+        -512,
+        460
       ],
-      "id": "75df438a-d284-4ad6-9881-e302e80d6e8d",
-      "name": "Log Error to Airtable5",
+      "id": "e6dfb24e-233b-44fe-a6fe-f699c02e2e33",
+      "name": "Log MN Plan Error",
       "credentials": {
         "airtableTokenApi": {
           "id": "R7CZf7GZvAyib012",
@@ -8830,14 +8927,25 @@
       "main": [
         [
           {
-            "node": "Check MN Invite Success",
+            "node": "Add to MN Plan",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Check MN Invite Success": {
+    "Add to MN Plan": {
+      "main": [
+        [
+          {
+            "node": "Check MN Plan Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check MN Plan Success": {
       "main": [
         [
           {
@@ -8849,22 +8957,27 @@
             "node": "Update Client: MN Invite Status",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Update Student: MN Plan",
+            "type": "main",
+            "index": 0
           }
         ],
         [
           {
-            "node": "Alert: MN Invite Failed",
+            "node": "Alert: MN Plan Failed",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Alert: MN Invite Failed": {
+    "Alert: MN Plan Failed": {
       "main": [
         [
           {
-            "node": "Log Error to Airtable5",
+            "node": "Log MN Plan Error",
             "type": "main",
             "index": 0
           }

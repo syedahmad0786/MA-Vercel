@@ -9,12 +9,12 @@
  * - Tags (40+)
  * - Pipelines (4) - requires opportunities.write scope
  * - Calendars (4) - requires team members
+ * - Email Templates (46) - via POST /emails/builder
  *
  * Assets that CANNOT be created via API and require manual build:
  * - Workflows/Automations (28)
  * - Forms & Surveys (7)
  * - Funnels & Landing Pages (10)
- * - Email Templates (46)
  * - SMS Templates (42)
  * - Trigger Links (6)
  * - Website Pages (7)
@@ -33,6 +33,7 @@ const { createCustomFields } = require('./create-custom-fields');
 const { createTags } = require('./create-tags');
 const { createPipelines } = require('./create-pipelines');
 const { createCalendars } = require('./create-calendars');
+const { createEmailTemplates } = require('./create-email-templates');
 const config = require('./config');
 
 async function main() {
@@ -60,6 +61,9 @@ async function main() {
 
     // Phase 5: Calendars
     summary.calendars = await createCalendars();
+
+    // Phase 6: Email Templates
+    summary.emailTemplates = await createEmailTemplates();
 
   } catch (err) {
     console.error('\n❌ Fatal error:', err.message);
@@ -92,7 +96,6 @@ async function main() {
   console.log('║  • 28 Workflows/Automations                              ║');
   console.log('║  • 7  Forms & Surveys                                    ║');
   console.log('║  • 10 Funnels & Landing Pages                            ║');
-  console.log('║  • 46 Email Templates                                    ║');
   console.log('║  • 42 SMS Templates                                      ║');
   console.log('║  • 6  Trigger Links                                      ║');
   console.log('║  • 7  Website Pages                                      ║');

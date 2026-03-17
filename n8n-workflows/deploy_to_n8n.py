@@ -26,8 +26,8 @@ N8N_BASE_URL = "https://n8n.aimanagingservices.com"
 N8N_API_KEY = (
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
     "eyJzdWIiOiIyNDk2NzU4My00MzM1LTRiYjMtOTFiZi02MTNhMTNmNzk2ZWIi"
-    "LCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzcxNDIwNDA1fQ."
-    "xpTdq-YmnV14s6S2EY7jFYJ2HRdNGY3k6CPZ44je2Dg"
+    "LCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzkwMDk0fQ."
+    "XKLaNQ5A8F6Q0K3tF1s2RH8ZBXov0dTdu92_KjiHi4E"
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -78,19 +78,22 @@ def load_workflow(filename):
 
 def create_workflow(workflow_data):
     """Create a workflow via the n8n API."""
-    result = api_request("POST", "/api/v1/workflows", body=workflow_data)
+    # Remove read-only fields that the API rejects
+    clean_data = {k: v for k, v in workflow_data.items() if k not in ("tags", "staticData")}
+    result = api_request("POST", "/api/v1/workflows", body=clean_data)
     return result
 
 
 def activate_workflow(workflow_id):
-    """Activate a workflow by ID."""
-    result = api_request("PATCH", f"/api/v1/workflows/{workflow_id}", body={"active": True})
+    """Activate a workflow by ID via POST /activate endpoint."""
+    result = api_request("POST", f"/api/v1/workflows/{workflow_id}/activate")
     return result
 
 
-def update_workflow_settings(workflow_id, settings_update):
-    """Update a workflow's settings (e.g., to attach error handler)."""
-    result = api_request("PATCH", f"/api/v1/workflows/{workflow_id}", body=settings_update)
+def update_workflow(workflow_id, update_body):
+    """Update a workflow via PUT with only allowed fields (name, nodes, connections, settings)."""
+    allowed = {k: update_body[k] for k in ("name", "nodes", "connections", "settings") if k in update_body}
+    result = api_request("PUT", f"/api/v1/workflows/{workflow_id}", body=allowed)
     return result
 
 
@@ -98,6 +101,11 @@ def get_all_workflows():
     """Fetch all workflows from the n8n instance."""
     result = api_request("GET", "/api/v1/workflows?limit=100")
     return result.get("data", result.get("results", []))
+
+
+def get_workflow_detail(workflow_id):
+    """Fetch full workflow detail by ID."""
+    return api_request("GET", f"/api/v1/workflows/{workflow_id}")
 
 
 def attach_error_handler_to_all(error_handler_id, skip_ids=None):
@@ -128,12 +136,14 @@ def attach_error_handler_to_all(error_handler_id, skip_ids=None):
             continue
 
         try:
-            update_workflow_settings(wf_id, {
-                "settings": {
-                    **current_settings,
-                    "errorWorkflow": str(error_handler_id)
-                }
-            })
+            # Fetch full workflow to do a PUT update
+            full_wf = get_workflow_detail(wf_id)
+            full_wf.setdefault("settings", {})
+            full_wf["settings"]["errorWorkflow"] = str(error_handler_id)
+            # Remove read-only fields
+            for key in ("id", "createdAt", "updatedAt", "tags", "staticData"):
+                full_wf.pop(key, None)
+            update_workflow(wf_id, full_wf)
             print(f"  LINKED: {wf_name} (ID: {wf_id})")
             updated += 1
         except Exception as e:

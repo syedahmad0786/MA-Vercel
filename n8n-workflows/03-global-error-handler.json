@@ -1,0 +1,287 @@
+{
+  "name": "Global Error Handler - Log, Notify & Auto-Resolve",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// ERROR CLASSIFIER & SOLUTION ENGINE\n// ============================================================\n// Classifies errors into categories and suggests solutions.\n// Also determines if the error is auto-retryable.\n// ============================================================\n\nconst errorData = $input.first().json;\n\n// Extract error details from the Error Trigger payload\nconst execution = errorData.execution || {};\nconst workflow = errorData.workflow || {};\nconst errorMessage = execution.error?.message || execution.lastNodeExecuted?.error?.message || 'Unknown error';\nconst errorStack = execution.error?.stack || '';\nconst failedNodeName = execution.lastNodeExecuted || 'Unknown';\nconst workflowName = workflow.name || 'Unknown Workflow';\nconst workflowId = workflow.id || '';\nconst executionId = execution.id || '';\nconst executionMode = execution.mode || 'unknown';\nconst timestamp = new Date().toISOString();\n\n// ---- ERROR CLASSIFICATION ENGINE ----\nconst msg = errorMessage.toLowerCase();\nconst stack = errorStack.toLowerCase();\n\nlet errorCategory = 'Unknown';\nlet severity = 'Medium';\nlet suggestedSolution = '';\nlet autoRetryable = false;\nlet autoFixAction = 'none';\n\n// --- Authentication / Credential Errors ---\nif (msg.includes('401') || msg.includes('unauthorized') || msg.includes('authentication') || msg.includes('invalid api key') || msg.includes('credential') || msg.includes('forbidden') || msg.includes('403')) {\n  errorCategory = 'Authentication Error';\n  severity = 'Critical';\n  suggestedSolution = '1. Go to n8n Credentials page\\n2. Find the credential used by node: ' + failedNodeName + '\\n3. Re-enter/refresh the API key or token\\n4. Test the credential\\n5. Re-execute the workflow';\n  autoRetryable = false;\n}\n// --- Rate Limiting ---\nelse if (msg.includes('429') || msg.includes('rate limit') || msg.includes('too many requests') || msg.includes('throttl')) {\n  errorCategory = 'Rate Limit Error';\n  severity = 'Medium';\n  suggestedSolution = '1. Wait 5-10 minutes and retry\\n2. Reduce workflow execution frequency\\n3. Add a Wait node before API calls\\n4. Enable batching in workflow settings';\n  autoRetryable = true;\n  autoFixAction = 'retry_with_delay';\n}\n// --- Network / Timeout Errors ---\nelse if (msg.includes('timeout') || msg.includes('econnrefused') || msg.includes('enotfound') || msg.includes('network') || msg.includes('socket') || msg.includes('econnreset') || msg.includes('etimedout') || msg.includes('502') || msg.includes('503') || msg.includes('504')) {\n  errorCategory = 'Network / Timeout Error';\n  severity = 'Medium';\n  suggestedSolution = '1. Check if the external service is operational\\n2. Verify the URL/hostname is correct\\n3. Auto-retry is enabled for this error type\\n4. If persistent, check n8n server DNS and firewall settings';\n  autoRetryable = true;\n  autoFixAction = 'retry_immediate';\n}\n// --- Data / Validation Errors ---\nelse if (msg.includes('validation') || msg.includes('required field') || msg.includes('missing') || msg.includes('undefined') || msg.includes('null') || msg.includes('cannot read prop') || msg.includes('is not defined') || msg.includes('invalid') || msg.includes('parse error') || msg.includes('json')) {\n  errorCategory = 'Data Validation Error';\n  severity = 'High';\n  suggestedSolution = '1. Check input data format in the failed node: ' + failedNodeName + '\\n2. Verify all required fields are populated\\n3. Add a Set/Code node before to sanitize data\\n4. Check expressions for typos or incorrect references\\n5. Test with sample data in the node editor';\n  autoRetryable = false;\n}\n// --- Resource Not Found ---\nelse if (msg.includes('404') || msg.includes('not found') || msg.includes('does not exist') || msg.includes('no such')) {\n  errorCategory = 'Resource Not Found';\n  severity = 'High';\n  suggestedSolution = '1. Verify the resource ID/name in node: ' + failedNodeName + '\\n2. Check if the Airtable base/table still exists\\n3. Verify the API endpoint URL is correct\\n4. The referenced record may have been deleted';\n  autoRetryable = false;\n}\n// --- Quota / Billing Errors ---\nelse if (msg.includes('quota') || msg.includes('limit exceeded') || msg.includes('billing') || msg.includes('payment') || msg.includes('subscription')) {\n  errorCategory = 'Quota / Billing Error';\n  severity = 'Critical';\n  suggestedSolution = '1. Check your API plan usage/limits\\n2. Upgrade plan if limits are consistently hit\\n3. Reduce data volume per execution\\n4. Check billing dashboard for the service';\n  autoRetryable = false;\n}\n// --- Code Execution Errors ---\nelse if (msg.includes('syntax') || msg.includes('referenceerror') || msg.includes('typeerror') || msg.includes('rangeerror') || stack.includes('code node')) {\n  errorCategory = 'Code Node Error';\n  severity = 'High';\n  suggestedSolution = '1. Open the Code node: ' + failedNodeName + '\\n2. Check for JavaScript syntax errors\\n3. Verify variable names and data references\\n4. Test with console.log() to debug data shape\\n5. Check $input.all() returns expected data';\n  autoRetryable = false;\n}\n// --- Permission Errors ---\nelse if (msg.includes('permission') || msg.includes('access denied') || msg.includes('scope') || msg.includes('insufficient')) {\n  errorCategory = 'Permission Error';\n  severity = 'Critical';\n  suggestedSolution = '1. Check API key/token permissions/scopes\\n2. For Slack: ensure bot has chat:write scope\\n3. For Google Sheets: share the sheet with the service account\\n4. For Airtable: verify token has read/write access to the base';\n  autoRetryable = false;\n}\n// --- Server / Internal Errors ---\nelse if (msg.includes('500') || msg.includes('internal server') || msg.includes('unexpected error')) {\n  errorCategory = 'External Service Error (5xx)';\n  severity = 'Medium';\n  suggestedSolution = '1. The external service had an internal error\\n2. Auto-retry is enabled for this error type\\n3. If persistent, check the service status page\\n4. Contact the service provider if it continues';\n  autoRetryable = true;\n  autoFixAction = 'retry_with_delay';\n}\n// --- Fallback ---\nelse {\n  errorCategory = 'Unclassified Error';\n  severity = 'Medium';\n  suggestedSolution = '1. Review the full error message below\\n2. Check the failed node: ' + failedNodeName + '\\n3. Look at the execution log in n8n\\n4. Check n8n community forum for similar errors\\n5. Full error: ' + errorMessage;\n  autoRetryable = false;\n}\n\n// ---- BUILD OUTPUT ----\nreturn [{\n  json: {\n    // For Google Sheets logging\n    timestamp: timestamp,\n    workflow_name: workflowName,\n    workflow_id: workflowId,\n    execution_id: executionId,\n    execution_mode: executionMode,\n    failed_node: failedNodeName,\n    error_category: errorCategory,\n    severity: severity,\n    error_message: errorMessage.substring(0, 500),\n    suggested_solution: suggestedSolution,\n    auto_retryable: autoRetryable ? 'Yes' : 'No',\n    auto_fix_action: autoFixAction,\n    resolution_status: autoRetryable ? 'Pending Auto-Retry' : 'Requires Manual Fix',\n    resolved_at: '',\n    // For Slack notification\n    _slack_message: buildSlackMessage({\n      workflowName, workflowId, executionId, failedNodeName,\n      errorCategory, severity, errorMessage, suggestedSolution, autoRetryable\n    })\n  }\n}];\n\nfunction buildSlackMessage(d) {\n  const severityEmoji = d.severity === 'Critical' ? ':red_circle:' : d.severity === 'High' ? ':large_orange_circle:' : ':large_yellow_circle:';\n  const retryStatus = d.autoRetryable ? ':arrows_counterclockwise: Auto-retry scheduled' : ':wrench: Manual fix required';\n  \n  let lines = [];\n  lines.push(severityEmoji + ' *n8n Workflow Error Alert*');\n  lines.push('');\n  lines.push('*Workflow:* ' + d.workflowName);\n  lines.push('*Failed Node:* `' + d.failedNodeName + '`');\n  lines.push('*Error Type:* ' + d.errorCategory + ' (' + d.severity + ')');\n  lines.push('*Status:* ' + retryStatus);\n  lines.push('');\n  lines.push('*Error Message:*');\n  lines.push('```' + d.errorMessage.substring(0, 300) + '```');\n  lines.push('');\n  lines.push('*Suggested Solution:*');\n  lines.push(d.suggestedSolution.replace(/\\n/g, '\\n'));\n  lines.push('');\n  lines.push('*Links:*');\n  lines.push('- <https://n8n.aimanagingservices.com/workflow/' + d.workflowId + '|Open Workflow>');\n  lines.push('- <https://n8n.aimanagingservices.com/executions/' + d.executionId + '|View Execution>');\n  lines.push('');\n  lines.push('_' + new Date().toLocaleString('en-US', {timeZone: 'America/New_York'}) + ' ET_');\n  \n  return lines.join('\\n');\n}"
+      },
+      "id": "classify-error",
+      "name": "Classify Error & Suggest Solution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Error Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.timestamp }}",
+            "Workflow Name": "={{ $json.workflow_name }}",
+            "Workflow ID": "={{ $json.workflow_id }}",
+            "Execution ID": "={{ $json.execution_id }}",
+            "Failed Node": "={{ $json.failed_node }}",
+            "Error Category": "={{ $json.error_category }}",
+            "Severity": "={{ $json.severity }}",
+            "Error Message": "={{ $json.error_message }}",
+            "Suggested Solution": "={{ $json.suggested_solution }}",
+            "Auto Retryable": "={{ $json.auto_retryable }}",
+            "Resolution Status": "={{ $json.resolution_status }}",
+            "Resolved At": ""
+          }
+        },
+        "options": {}
+      },
+      "id": "google-sheets-log",
+      "name": "Google Sheets - Log Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [600, 200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "channel": {
+          "__rl": true,
+          "mode": "name",
+          "value": ""
+        },
+        "text": "={{ $json._slack_message }}",
+        "otherOptions": {}
+      },
+      "id": "slack-error-notify",
+      "name": "Slack - Error Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [600, 400],
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "auto-retry-check",
+              "leftValue": "={{ $json.auto_retryable }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-auto-retryable",
+      "name": "Auto-Retryable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "amount": 60,
+        "unit": "seconds"
+      },
+      "id": "wait-before-retry",
+      "name": "Wait 60s Before Retry",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1150, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://n8n.aimanagingservices.com/api/v1/executions/{{ $('Classify Error & Suggest Solution').item.json.execution_id }}/retry",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "retry-execution",
+      "name": "n8n API - Retry Execution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1400, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "n8n API Key Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Error Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('Classify Error & Suggest Solution').item.json.timestamp }}",
+            "Workflow Name": "={{ $('Classify Error & Suggest Solution').item.json.workflow_name }}",
+            "Workflow ID": "={{ $('Classify Error & Suggest Solution').item.json.workflow_id }}",
+            "Execution ID": "={{ $('Classify Error & Suggest Solution').item.json.execution_id }}",
+            "Failed Node": "=AUTO-RETRY",
+            "Error Category": "=Auto-Retry Attempted",
+            "Severity": "=Info",
+            "Error Message": "=Auto-retry triggered for execution {{ $('Classify Error & Suggest Solution').item.json.execution_id }}",
+            "Suggested Solution": "=Waiting for retry result",
+            "Auto Retryable": "=Yes",
+            "Resolution Status": "=Auto-Retry Sent",
+            "Resolved At": "={{ new Date().toISOString() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "google-sheets-log-retry",
+      "name": "Google Sheets - Log Retry",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1650, 200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "manual-fix-noop",
+      "name": "Requires Manual Fix",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1150, 400]
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Classify Error & Suggest Solution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Error & Suggest Solution": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Log Error",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack - Error Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Log Error": {
+      "main": [
+        [
+          {
+            "node": "Auto-Retryable?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-Retryable?": {
+      "main": [
+        [
+          {
+            "node": "Wait 60s Before Retry",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Requires Manual Fix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 60s Before Retry": {
+      "main": [
+        [
+          {
+            "node": "n8n API - Retry Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n API - Retry Execution": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Log Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": []
+}

@@ -163,7 +163,8 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "errorWorkflow": "REPLACE_WITH_ERROR_HANDLER_WORKFLOW_ID"
   },
   "staticData": null,
   "tags": []

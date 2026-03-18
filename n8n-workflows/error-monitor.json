@@ -1,0 +1,250 @@
+{
+  "name": "n8n Error Monitor - Auto Logger & Alerter",
+  "description": null,
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "error-monitor-trigger-k7m2",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Webhook (Manual)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        250,
+        200
+      ],
+      "webhookId": "error-monitor",
+      "id": "f5223410-38d0-4362-88ea-d65919b74e06"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "name": "Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        250,
+        420
+      ],
+      "id": "42cc2a2e-a568-4161-a701-841088b4e0fe"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://n8n.aimanagingservices.com/api/v1/executions?status=error&limit=50",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Get Failures",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ozsZJUiqYdU5xBbR",
+          "name": "n8n API Key Header"
+        }
+      },
+      "id": "257e3f01-413f-44dd-a825-aad79cd2f54f"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get failed executions from last 5 minutes\nconst data = $input.first().json;\nconst executions = data.data || [];\nconst now = new Date();\nconst fiveMinAgo = new Date(now.getTime() - 5 * 60 * 1000);\n\n// Filter to recent failures only, exclude THIS workflow's own executions\nconst thisWorkflowId = $workflow.id;\nconst recent = executions.filter(ex => {\n  const started = new Date(ex.startedAt || 0);\n  return started >= fiveMinAgo && ex.workflowId !== thisWorkflowId;\n});\n\nif (recent.length === 0) return [];\n\n// For each failure, build a log entry\nconst entries = [];\nfor (const ex of recent) {\n  entries.push({\n    json: {\n      executionId: ex.id || '',\n      workflowId: ex.workflowId || '',\n      startedAt: ex.startedAt || '',\n      status: ex.status || 'error'\n    }\n  });\n}\nreturn entries;"
+      },
+      "name": "Filter Recent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        300
+      ],
+      "id": "1282de64-afe5-43be-9cd7-6fd2f49919c7"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://n8n.aimanagingservices.com/api/v1/executions/{{ $json.executionId }}?includeData=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Get Execution Detail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        920,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ozsZJUiqYdU5xBbR",
+          "name": "n8n API Key Header"
+        }
+      },
+      "id": "7918b46f-23c2-497e-a51c-b2bdb16981d3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse execution detail and classify the error\nconst ex = $input.first().json;\nconst ts = new Date().toISOString();\n\n// Get workflow info\nconst wfData = ex.workflowData || {};\nconst wfName = wfData.name || 'Unknown';\nconst wfId = ex.workflowId || '';\nconst exId = ex.id || '';\n\n// Extract error info\nconst rd = (ex.data || {}).resultData || {};\nconst topErr = rd.error || {};\nlet errorMessage = topErr.message || '';\nlet failedNode = topErr.node?.name || '';\n\n// Also check runData for node-level errors\nconst runData = rd.runData || {};\nfor (const [nodeName, runs] of Object.entries(runData)) {\n  for (const run of runs) {\n    if (run.error) {\n      if (!failedNode) failedNode = nodeName;\n      if (!errorMessage) errorMessage = run.error.message || '';\n    }\n  }\n}\n\nif (!errorMessage) errorMessage = 'Unknown error (check execution log)';\nif (!failedNode) failedNode = 'Unknown';\n\n// Classify\nconst m = (errorMessage || '').toLowerCase();\nlet cat = 'Unclassified', sev = 'Medium', sol = 'Check execution log.', retry = false;\nif (m.includes('401') || m.includes('unauthorized') || m.includes('credential') || m.includes('refresh token') || m.includes('forbidden')) {\n  cat = 'Auth Error'; sev = 'Critical'; sol = 'Re-authenticate credential for: ' + failedNode;\n} else if (m.includes('429') || m.includes('rate limit')) {\n  cat = 'Rate Limit'; sev = 'Medium'; sol = 'Wait and retry.'; retry = true;\n} else if (m.includes('timeout') || m.includes('econn') || m.includes('network') || m.includes('socket') || m.includes('502') || m.includes('503') || m.includes('504')) {\n  cat = 'Network'; sev = 'Medium'; sol = 'Check service.'; retry = true;\n} else if (m.includes('validation') || m.includes('required') || m.includes('undefined') || m.includes('cannot read') || m.includes('has issues')) {\n  cat = 'Data/Config Error'; sev = 'High'; sol = 'Check config in: ' + failedNode;\n} else if (m.includes('404') || m.includes('not found') || m.includes('does not exist')) {\n  cat = 'Not Found'; sev = 'High'; sol = 'Check resource in: ' + failedNode;\n} else if (m.includes('500') || m.includes('internal server')) {\n  cat = 'Server Error'; sev = 'Medium'; sol = 'Service error.'; retry = true;\n} else if (m.includes('permission') || m.includes('access denied')) {\n  cat = 'Permission'; sev = 'Critical'; sol = 'Check scopes for: ' + failedNode;\n}\n\nconst emoji = sev === 'Critical' ? ':red_circle:' : sev === 'High' ? ':large_orange_circle:' : ':large_yellow_circle:';\nconst slack = emoji + ' *n8n Error*\\n*Workflow:* ' + wfName + '\\n*Node:* `' + failedNode + '`\\n*Type:* ' + cat + ' (' + sev + ')\\n```' + (errorMessage||'').substring(0,300) + '```\\n*Fix:* ' + sol + '\\n<https://n8n.aimanagingservices.com/workflow/' + wfId + '|Workflow> | <https://n8n.aimanagingservices.com/execution/' + exId + '|Execution>';\n\nconst sheetRow = JSON.stringify({\n  values: [[ts, wfName, wfId, exId, failedNode, cat, sev, (errorMessage||'').substring(0,500), sol, retry?'Yes':'No', retry?'Pending':'Manual Fix', '']]\n});\n\nreturn [{ json: { _slack: slack, _body: sheetRow, _retry: retry, _exId: exId } }];"
+      },
+      "name": "Classify Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1140,
+        300
+      ],
+      "id": "48f9c3e5-fb23-43ac-87b9-1fb1800ec6d7"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1oSv1QnkoagynThwcFa_0aZTz5sq_jSmTqxMqvIX3TsM/values/Error%20Log!A:L:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json._body }}",
+        "options": {}
+      },
+      "name": "Log to Sheet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NNdDv43lcKI4YPCA",
+          "name": "Google Sheets - SEO Audit"
+        }
+      },
+      "id": "a7e9b1f5-e7f0-433d-bc68-d915ee6385b9"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A11F18N5T",
+          "mode": "list",
+          "cachedResultName": "student-onboarding-n8n"
+        },
+        "text": "={{ $('Classify Error').item.json._slack }}",
+        "otherOptions": {}
+      },
+      "name": "Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        420
+      ],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "kij3VguUqWAdnZCQ",
+          "name": "Slack account"
+        }
+      },
+      "id": "ec1cfec5-6595-4b9c-b7bf-928a0ae990d7"
+    }
+  ],
+  "connections": {
+    "Get Failures": {
+      "main": [
+        [
+          {
+            "node": "Filter Recent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Recent": {
+      "main": [
+        [
+          {
+            "node": "Get Execution Detail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Execution Detail": {
+      "main": [
+        [
+          {
+            "node": "Classify Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Error": {
+      "main": [
+        [
+          {
+            "node": "Log to Sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (Manual)": {
+      "main": [
+        [
+          {
+            "node": "Get Failures",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule": {
+      "main": [
+        [
+          {
+            "node": "Get Failures",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

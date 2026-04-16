@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/close-crm-onboarding.js": {
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "src": "/close-crm-onboarding",
+      "dest": "/api/close-crm-onboarding"
+    }
+  ]
+}

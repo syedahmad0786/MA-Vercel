@@ -1,0 +1,11 @@
+{
+  "name": "ma-vercel-onboarding",
+  "version": "1.0.0",
+  "description": "New Student Onboarding webhook handler - replicates n8n workflow",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "start": "node api/close-crm-onboarding.js"
+  }
+}
